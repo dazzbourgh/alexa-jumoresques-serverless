@@ -1,10 +1,11 @@
 import * as AWS from 'aws-sdk'
 
+const region: string = process.env.REGION;
 const pollyClient = new AWS.Polly({
-    region: 'us-west-2'
+    region: region
 });
 
-export default function toSpeech(text: string): Promise<Buffer> {
+export default function textToSpeech(text: string): Promise<Buffer> {
     const params: AWS.Polly.Types.SynthesizeSpeechInput = {
         Text: text,
         OutputFormat: 'mp3',
