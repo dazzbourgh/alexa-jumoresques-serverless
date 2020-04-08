@@ -1,6 +1,7 @@
 import * as AWS from 'aws-sdk'
+import properties from '../../../../properties-reader'
 
-const region: string = process.env.REGION
+const region: string = properties.aws.region
 const pollyClient = new AWS.Polly({
   region
 })
@@ -8,8 +9,8 @@ const pollyClient = new AWS.Polly({
 export default async function textToSpeech (text: string): Promise<Buffer> {
   const params: AWS.Polly.Types.SynthesizeSpeechInput = {
     Text: text,
-    OutputFormat: 'mp3',
-    VoiceId: 'Maxim'
+    OutputFormat: properties.polly.outputFormat,
+    VoiceId: properties.aws.polly.voice
   }
 
   return await new Promise<Buffer>((resolve, reject) => {

@@ -1,8 +1,8 @@
 import { PutObjectOutput } from 'aws-sdk/clients/s3'
-import fetchJumoresques from './vk/fetch-jumoresques'
-import { Jumoresque } from '../domain/domain'
-import textToSpeech from './aws/polly/text-to-speech'
-import uploadToS3 from './aws/s3/upload-to-s3'
+import fetchJumoresques from '../util/vk/fetch-jumoresques'
+import { Jumoresque } from '../../domain/domain'
+import textToSpeech from '../util/aws/polly/text-to-speech'
+import uploadToS3 from '../util/aws/s3/upload-to-s3'
 
 export default async function refreshHandler (): Promise<PutObjectOutput> {
   const jumoresques: Jumoresque[] = await fetchJumoresques('jumoreski')

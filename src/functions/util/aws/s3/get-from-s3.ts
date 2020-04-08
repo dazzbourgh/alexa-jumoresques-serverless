@@ -1,7 +1,8 @@
 import * as AWS from 'aws-sdk'
 import { GetObjectRequest } from 'aws-sdk/clients/s3'
+import properties from '../../../../properties-reader'
 
-const bucketName = process.env.BUCKET_NAME
+const bucketName = properties.aws.bucketName
 const s3Client = new AWS.S3()
 
 export default async function getFromS3 (key: string): Promise<any> {
