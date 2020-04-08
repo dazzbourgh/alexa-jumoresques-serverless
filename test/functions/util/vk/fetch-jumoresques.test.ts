@@ -4,7 +4,7 @@ import axios from 'axios'
 
 jest.mock('axios')
 
-const mockResponse: VkResponse = {
+const mockVkResponse: VkResponse = {
   response: {
     count: 1,
     items: [
@@ -21,6 +21,10 @@ const mockResponse: VkResponse = {
   }
 }
 
+const mockResponse = {
+  data: mockVkResponse
+}
+
 const jumoresques: Jumoresque[] = [{
   text: 'some text',
   likes: 10
@@ -29,5 +33,6 @@ const jumoresques: Jumoresque[] = [{
 test('should fetch jumoresques from vk', async () => {
   // @ts-ignore
   axios.get.mockResolvedValue(mockResponse)
-  await expect(fetchJumoresques('jumoresques')).resolves.toBe(jumoresques)
+  const actual = fetchJumoresques('jumoresques')
+  await expect(actual).resolves.toStrictEqual(jumoresques)
 })

@@ -1,4 +1,4 @@
-import * as props from '../env.json'
+import props from '../env.json'
 import prepareProperties from './prepare-properties'
 
 const def = JSON.parse(JSON.stringify(props.default))
