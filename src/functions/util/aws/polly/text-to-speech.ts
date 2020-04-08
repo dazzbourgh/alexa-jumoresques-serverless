@@ -1,5 +1,5 @@
 import * as AWS from 'aws-sdk'
-import properties from '../../../../properties-reader'
+import properties from '../../../../props/properties'
 
 const region: string = properties.aws.region
 const pollyClient = new AWS.Polly({

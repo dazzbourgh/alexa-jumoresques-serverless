@@ -1,6 +1,6 @@
 import * as AWS from 'aws-sdk'
 import { GetObjectRequest } from 'aws-sdk/clients/s3'
-import properties from '../../../../properties-reader'
+import properties from '../../../../props/properties'
 
 const bucketName = properties.aws.bucketName
 const s3Client = new AWS.S3()
