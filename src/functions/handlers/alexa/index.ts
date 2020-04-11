@@ -2,7 +2,7 @@ import * as Alexa from 'ask-sdk'
 import { HandlerInput } from 'ask-sdk'
 import { CustomSkillRequestHandler } from 'ask-sdk-core/dist/dispatcher/request/handler/CustomSkillRequestHandler'
 import { CustomSkillErrorHandler } from 'ask-sdk-core/dist/dispatcher/error/handler/CustomSkillErrorHandler'
-import properties from '../../props/properties'
+import properties from '../../../props/properties'
 
 const controller = {
   play (handlerInput: HandlerInput) {
@@ -38,7 +38,7 @@ const ErrorHandler: CustomSkillErrorHandler = {
     return true
   },
   handle (handlerInput: HandlerInput, error: Error) {
-    const speakOutput = `${error.stack.toString().substring(0, 120)}`
+    const speakOutput = `${(error.stack ?? '').toString().substring(0, 120)}`
 
     return handlerInput.responseBuilder
       .speak(speakOutput)

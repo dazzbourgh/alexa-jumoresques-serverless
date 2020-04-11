@@ -1,9 +1,10 @@
-import * as AWS from 'aws-sdk'
+import AWS from 'aws-sdk'
 import { AudioStream, SynthesizeSpeechInput } from 'aws-sdk/clients/polly'
 
 export default function textToSpeech (pollyClient: AWS.Polly): (params: SynthesizeSpeechInput) => Promise<AudioStream> {
   return async (params) => {
     const result = await pollyClient.synthesizeSpeech(params).promise()
-    return result.AudioStream
+    // a hack to make types resolve
+    return result.AudioStream as unknown as AudioStream
   }
 }

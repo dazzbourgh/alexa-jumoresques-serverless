@@ -1,13 +1,13 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Outputs the time
+Description: Fetches jumoresques and reads them out loud in funny voice
 Resources:
   RefreshJumoresquesHandler:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: refresh-handler.handler
+      Handler: index.handler
       Runtime: nodejs12.x
-      CodeUri: ./dist/functions/handlers
+      CodeUri: ./dist/functions/handlers/vk
       Events:
         Refresh:
           Type: Schedule
