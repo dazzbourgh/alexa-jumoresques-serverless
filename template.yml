@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Outputs the time
+Resources:
+  RefreshJumoresquesHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: refresh-handler.handler
+      Runtime: nodejs12.x
+      CodeUri: ./dist/functions/handlers
+      Events:
+        Refresh:
+          Type: Schedule
+          Properties:
+            Schedule: 'rate(1 hour)'
+            Name: RefreshJumoresquesSchedule
+            Description: Triggers refresh handler for jumoresques
+            Enabled: true
+#  AlexaSkillHandler:
+#    Type: AWS::Serverless::Function
+#    Properties:
+#      Handler: alexa-skill-handler.handler
+#      Runtime: nodejs12.x
+#      CodeUri: ./dist/functions/handlers
+#      Events:
+#        Refresh:
+#          Type: Schedule
+#          Properties:
+#            Schedule: 'rate(1 hour)'
+#            Name: RefreshJumoresquesSchedule
+#            Description: Triggers refresh handler for jumoresques
+#            Enabled: true

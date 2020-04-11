@@ -7,6 +7,5 @@ const def = JSON.parse(JSON.stringify(props.default))
 const environment = props[process.env.ENVIRONMENT]
 
 const properties: any = prepareProperties(Object.assign(def, environment))
-// TODO: replace $ values in properties with env variables
 
 export default properties

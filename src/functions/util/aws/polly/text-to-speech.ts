@@ -1,27 +1,9 @@
 import * as AWS from 'aws-sdk'
-import properties from '../../../../props/properties'
+import { AudioStream, SynthesizeSpeechInput } from 'aws-sdk/clients/polly'
 
-const region: string = properties.aws.region
-const pollyClient = new AWS.Polly({
-  region
-})
-
-export default async function textToSpeech (text: string): Promise<Buffer> {
-  const params: AWS.Polly.Types.SynthesizeSpeechInput = {
-    Text: text,
-    OutputFormat: properties.polly.outputFormat,
-    VoiceId: properties.aws.polly.voice
+export default function textToSpeech (pollyClient: AWS.Polly): (params: SynthesizeSpeechInput) => Promise<AudioStream> {
+  return async (params) => {
+    const result = await pollyClient.synthesizeSpeech(params).promise()
+    return result.AudioStream
   }
-
-  return await new Promise<Buffer>((resolve, reject) => {
-    pollyClient.synthesizeSpeech(params, (err, data) => {
-      if (typeof err !== 'undefined') {
-        reject(err)
-      } else {
-        if (data.AudioStream instanceof Buffer) {
-          resolve(data.AudioStream)
-        }
-      }
-    })
-  })
 }

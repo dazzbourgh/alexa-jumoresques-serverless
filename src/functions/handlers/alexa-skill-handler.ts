@@ -2,12 +2,13 @@ import * as Alexa from 'ask-sdk'
 import { HandlerInput } from 'ask-sdk'
 import { CustomSkillRequestHandler } from 'ask-sdk-core/dist/dispatcher/request/handler/CustomSkillRequestHandler'
 import { CustomSkillErrorHandler } from 'ask-sdk-core/dist/dispatcher/error/handler/CustomSkillErrorHandler'
+import properties from '../../props/properties'
 
 const controller = {
   play (handlerInput: HandlerInput) {
     const playBehavior = 'REPLACE_ALL'
-    const url = 'https://jumoresques.s3-us-west-1.amazonaws.com/' +
-            'jumoresques.mp3'
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    const url = `https://${properties.aws.s3.bucketName}.s3-us-west-1.amazonaws.com/${properties.aws.s3.key}`
 
     handlerInput.responseBuilder
       .speak('Here are some jumoresques:')
@@ -37,7 +38,6 @@ const ErrorHandler: CustomSkillErrorHandler = {
     return true
   },
   handle (handlerInput: HandlerInput, error: Error) {
-    console.log(`~~~~ Error handled: ${error.stack}`)
     const speakOutput = `${error.stack.toString().substring(0, 120)}`
 
     return handlerInput.responseBuilder

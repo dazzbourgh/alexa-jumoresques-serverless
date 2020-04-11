@@ -1,0 +1,16 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      nodejs: 12
+  build:
+    commands:
+      - npm install
+      - export BUCKET=jumoresques-lambda-bucket
+      - npm run build
+      - aws cloudformation package --template-file template.yml --s3-bucket $BUCKET --output-template-file output-template.yml
+artifacts:
+  type: zip
+  files:
+    - template.yml
+    - output-template.yml

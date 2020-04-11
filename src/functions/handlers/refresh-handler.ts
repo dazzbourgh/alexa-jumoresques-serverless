@@ -1,15 +1,37 @@
-import { PutObjectOutput } from 'aws-sdk/clients/s3'
 import fetchJumoresques from '../util/vk/fetch-jumoresques'
 import { Jumoresque } from '../../domain/domain'
 import textToSpeech from '../util/aws/polly/text-to-speech'
-import uploadToS3 from '../util/aws/s3/upload-to-s3'
+import AWS from 'aws-sdk'
+import { putObject } from '../util/aws/s3/s3'
+import properties from '../../props/properties'
+import { AudioStream } from 'aws-sdk/clients/polly'
+import { mergeText } from '../util/generic/generic-utils'
 
-export default async function refreshHandler (): Promise<PutObjectOutput> {
-  const jumoresques: Jumoresque[] = await fetchJumoresques('jumoreski')
-  const text: string = jumoresques
-    .sort((a, b) => a.likes - b.likes)
-    .slice(0, 5)
-    .reduce((prev, cur) => `${prev}\n\n${cur.text}`, '')
-  const audio: Buffer = await textToSpeech(text)
-  return await uploadToS3('jumoresques.mp3', audio)
+const pollyGenericParams = {
+  OutputFormat: properties.aws.polly.outputFormat,
+  VoiceId: properties.aws.polly.voice
+}
+
+const s3GenericParams = {
+  Bucket: properties.aws.s3.bucketName,
+  Key: properties.aws.s3.key
+}
+
+const pollyClient = new AWS.Polly({
+  region: properties.aws.region
+})
+
+const s3Client = new AWS.S3()
+
+export const handler = async (): Promise<void> => {
+  const jumoresques: Jumoresque[] = await fetchJumoresques(properties.vk.domain)
+  const text: string = mergeText(jumoresques)
+  const audio: AudioStream = await textToSpeech(pollyClient)({
+    ...pollyGenericParams,
+    Text: text
+  })
+  await putObject(s3Client)({
+    ...s3GenericParams,
+    Body: audio
+  })
 }
