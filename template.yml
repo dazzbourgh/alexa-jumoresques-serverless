@@ -7,7 +7,7 @@ Resources:
     Properties:
       Handler: index.handler
       Runtime: nodejs12.x
-      CodeUri: ./dist/functions/handlers/vk
+      CodeUri: ./dist/functions/handlers/vk.js
       Events:
         Refresh:
           Type: Schedule
