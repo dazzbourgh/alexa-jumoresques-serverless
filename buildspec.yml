@@ -7,6 +7,8 @@ phases:
     commands:
       - npm install
       - npm run build
+#     a workaround for timestamps before 1980
+      - find ./node_modules -type f -exec touch {} +
       - aws cloudformation package --template-file template.yml --s3-bucket jumoresques-lambda-bucket --output-template-file output-template.yml
 artifacts:
   type: zip
