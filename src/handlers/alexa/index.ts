@@ -2,7 +2,7 @@ import * as Alexa from 'ask-sdk'
 import { HandlerInput } from 'ask-sdk'
 import { CustomSkillRequestHandler } from 'ask-sdk-core/dist/dispatcher/request/handler/CustomSkillRequestHandler'
 import { CustomSkillErrorHandler } from 'ask-sdk-core/dist/dispatcher/error/handler/CustomSkillErrorHandler'
-import properties from '../../../props/properties'
+import properties from '../../common/props/properties'
 
 const controller = {
   play (handlerInput: HandlerInput) {

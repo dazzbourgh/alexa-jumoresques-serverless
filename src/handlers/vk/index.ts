@@ -1,11 +1,11 @@
-import fetchJumoresques from '../../util/vk/fetch-jumoresques'
-import { Jumoresque } from '../../../domain/domain'
-import textToSpeech from '../../util/aws/polly/text-to-speech'
+import fetchJumoresques from '../../common/util/vk/fetch-jumoresques'
+import { Jumoresque } from '../../common/domain/domain'
+import textToSpeech from '../../common/util/aws/polly/text-to-speech'
 import AWS from 'aws-sdk'
-import { putObject } from '../../util/aws/s3/s3'
-import properties from '../../../props/properties'
+import { putObject } from '../../common/util/aws/s3/s3'
+import properties from '../../common/props/properties'
 import { AudioStream } from 'aws-sdk/clients/polly'
-import { mergeText } from '../../util/generic/generic-utils'
+import { mergeText } from '../../common/util/generic/generic-utils'
 
 const pollyGenericParams = {
   OutputFormat: properties.aws.polly.outputFormat,

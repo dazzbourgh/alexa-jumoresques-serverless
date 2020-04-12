@@ -1,7 +1,7 @@
 import props from './env.test.json'
 import invalidProps from './env.invalid.json'
 import expectedProps from './env.expected.json'
-import prepareProperties from '../../src/props/prepare-properties'
+import prepareProperties from '../../src/common/props/prepare-properties'
 
 process.env.ENV_VAR = 'someVal'
 

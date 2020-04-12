@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { Jumoresque, VkResponse } from '../../../domain/domain'
-import properties from '../../../props/properties'
+import { Jumoresque, VkResponse } from '../../domain/domain'
+import properties from '../../props/properties'
 
 const accessToken: string = properties.vk.accessToken
 const version: string = properties.vk.apiVersion

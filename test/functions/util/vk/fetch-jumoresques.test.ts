@@ -1,5 +1,5 @@
-import fetchJumoresques from '../../../../src/functions/util/vk/fetch-jumoresques'
-import { Jumoresque, VkResponse } from '../../../../src/domain/domain'
+import fetchJumoresques from '../../../../src/common/util/vk/fetch-jumoresques'
+import { Jumoresque, VkResponse } from '../../../../src/common/domain/domain'
 import axios from 'axios'
 
 jest.mock('axios')

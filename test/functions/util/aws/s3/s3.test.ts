@@ -1,5 +1,5 @@
-import {putObject} from "../../../../../src/functions/util/aws/s3/s3";
-import properties from "../../../../../src/props/properties";
+import {putObject} from "../../../../../src/common/util/aws/s3/s3";
+import properties from "../../../../../src/common/props/properties";
 
 const buffer = new Buffer('some buffer', 'utf8');
 
