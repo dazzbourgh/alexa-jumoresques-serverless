@@ -7,31 +7,24 @@ import properties from '../../common/props/properties'
 import { AudioStream } from 'aws-sdk/clients/polly'
 import { mergeText } from '../../common/util/generic/generic-utils'
 
-const pollyGenericParams = {
-  OutputFormat: properties.aws.polly.outputFormat,
-  VoiceId: properties.aws.polly.voice
-}
-
-const s3GenericParams = {
-  Bucket: properties.aws.s3.bucketName,
-  Key: properties.aws.s3.key
-}
-
-const pollyClient = new AWS.Polly({
-  region: properties.aws.region
-})
-
-const s3Client = new AWS.S3()
-
 export const handler = async (): Promise<void> => {
-  const jumoresques: Jumoresque[] = await fetchJumoresques(properties.vk.domain)
+  const awaitedProps = await properties
+
+  const pollyClient = new AWS.Polly({
+    region: awaitedProps.aws.region
+  })
+
+  const s3Client = new AWS.S3()
+  const jumoresques: Jumoresque[] = await fetchJumoresques(awaitedProps.vk.domain)
   const text: string = mergeText(jumoresques)
   const audio: AudioStream = await textToSpeech(pollyClient)({
-    ...pollyGenericParams,
+    OutputFormat: awaitedProps.aws.polly.outputFormat,
+    VoiceId: awaitedProps.aws.polly.voice,
     Text: text
   })
   await putObject(s3Client)({
-    ...s3GenericParams,
+    Bucket: awaitedProps.aws.s3.bucketName,
+    Key: awaitedProps.aws.s3.key,
     Body: audio
   })
 }

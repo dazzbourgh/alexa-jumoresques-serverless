@@ -5,10 +5,10 @@ import { CustomSkillErrorHandler } from 'ask-sdk-core/dist/dispatcher/error/hand
 import properties from '../../common/props/properties'
 
 const controller = {
-  play (handlerInput: HandlerInput) {
+  async play (handlerInput: HandlerInput) {
     const playBehavior = 'REPLACE_ALL'
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    const url = `https://${properties.aws.s3.bucketName}.s3-us-west-1.amazonaws.com/${properties.aws.s3.key}`
+    const awaitedProps = (await properties).aws.s3
+    const url = `https://${awaitedProps.bucketName}.s3-us-west-1.amazonaws.com/${awaitedProps.key}`
 
     handlerInput.responseBuilder
       .speak('Here are some jumoresques:')
@@ -28,8 +28,8 @@ const TellJumoresquesHandler: CustomSkillRequestHandler = {
   canHandle () {
     return true
   },
-  handle (handlerInput: HandlerInput) {
-    return controller.play(handlerInput)
+  async handle (handlerInput: HandlerInput) {
+    return await controller.play(handlerInput)
   }
 }
 

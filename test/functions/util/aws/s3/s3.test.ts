@@ -1,23 +1,22 @@
 import {putObject} from "../../../../../src/common/util/aws/s3/s3";
-import properties from "../../../../../src/common/props/properties";
+import S3 from "aws-sdk/clients/s3";
 
 const buffer = new Buffer('some buffer', 'utf8');
 
-const MockS3Client = jest.fn().mockImplementation(() => ({
-    putObject: function () {
-        return {
-            promise: () => Promise.resolve()
-        }
-    }
-}));
+const mockPut = jest.fn(() => ({
+    promise: () => Promise.resolve()
+}))
 
-const mockS3Client: any = new MockS3Client()
+const mockS3 = {
+    putObject: mockPut
+} as unknown as S3
 
 test('should upload to s3', async () => {
-    await putObject(mockS3Client)({
-        Bucket: properties.aws.s3.bucketName,
-        Key: properties.aws.s3.key,
+    const result = putObject(mockS3)({
+        Bucket: 'some-bucket',
+        Key: 'some-key',
         Body: buffer
     })
-    expect(MockS3Client).toHaveBeenCalled()
+    await expect(result).resolves.toBeUndefined()
+    expect(mockPut).toHaveBeenCalled()
 })
