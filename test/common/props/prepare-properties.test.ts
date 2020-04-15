@@ -1,7 +1,7 @@
 import props from './env.test.json'
 import invalidProps from './env.invalid.json'
 import expectedProps from './env.expected.json'
-import prepare from '../../src/common/props/prepare-properties'
+import prepare from '../../../src/common/props/prepare-properties'
 
 describe('properties preparing function', () => {
   test('should replace $ values with environment variables', async () => {

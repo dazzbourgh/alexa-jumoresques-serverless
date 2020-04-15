@@ -11,7 +11,5 @@ phases:
       - find ./node_modules -type f -exec touch {} +
       - aws cloudformation package --template-file template.yml --s3-bucket jumoresques-lambda-bucket --output-template-file output-template.yml
 artifacts:
-  type: zip
   files:
-    - template.yml
-    - output-template.yml
+    - packaged-template.yml
