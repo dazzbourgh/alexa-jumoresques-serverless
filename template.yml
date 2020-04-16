@@ -7,7 +7,7 @@ Resources:
     Properties:
       CompatibleRuntimes:
         - nodejs12.x
-      ContentUri: node_modules
+      ContentUri: nodejs
       Description: node_modules directory containing all dependencies
       LayerName: NodeModulesLayer
   RefreshJumoresquesHandler:
