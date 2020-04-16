@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "An Alexa skill to read cool jumoresques aloud",
   "scripts": {
-    "build": "npm run clean & npm run lint & npm run test & tsc",
-    "build-aws": "npm run clean & npm run lint & npm run test & tsc & npm run prepare-commons",
+    "build": "npm run clean && npm run lint && npm run test && tsc",
+    "build-aws": "npm run clean && npm run lint && npm run test && tsc && npm run prepare-commons",
     "lint": "eslint src --ext ts",
     "test": "jest --no-cache",
     "clean": "rimraf dist",
-    "prepare-commons": "mv dist/common/ dist/aws/common"
+    "prepare-commons": "mkdir dist/aws && mv dist/common/ dist/aws/common"
   },
   "keywords": [],
   "author": "",
