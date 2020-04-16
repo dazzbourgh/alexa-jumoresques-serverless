@@ -2,22 +2,6 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Fetches jumoresques and reads them out loud in funny voice
 Resources:
-  CommonLayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      CompatibleRuntimes:
-        - nodejs12.x
-      ContentUri: dist/common
-      Description: Common functions and domain objects
-      LayerName: CommonLayer
-  PropertiesLayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      CompatibleRuntimes:
-        - nodejs12.x
-      ContentUri: dist/properties
-      Description: Externalized properties for the application
-      LayerName: PropertiesLayer
   NodeModulesLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -33,9 +17,7 @@ Resources:
       Runtime: nodejs12.x
       CodeUri: dist/handlers/vk
       Layers:
-        - !Ref CommonLayer
         - !Ref NodeModulesLayer
-        - !Ref PropertiesLayer
       Events:
         Refresh:
           Type: Schedule
