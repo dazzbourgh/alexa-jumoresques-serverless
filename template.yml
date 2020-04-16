@@ -7,7 +7,7 @@ Resources:
     Properties:
       CompatibleRuntimes:
         - nodejs12.x
-      ContentUri: dist/common
+      ContentUri: dist/aws
       Description: Common functions and domain objects
       LayerName: CommonLayer
   NodeModulesLayer:
