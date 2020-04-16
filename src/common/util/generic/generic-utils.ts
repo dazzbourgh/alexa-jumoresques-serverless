@@ -1,4 +1,4 @@
-import { Jumoresque } from '../../domain/domain'
+import { Jumoresque } from '../..'
 
 export function mergeText (jumoresques: Jumoresque[]): string {
   return jumoresques

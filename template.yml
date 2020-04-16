@@ -7,9 +7,17 @@ Resources:
     Properties:
       CompatibleRuntimes:
         - nodejs12.x
-      ContentUri: dist/aws
+      ContentUri: dist/common
       Description: Common functions and domain objects
       LayerName: CommonLayer
+  PropertiesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - nodejs12.x
+      ContentUri: dist/properties
+      Description: Externalized properties for the application
+      LayerName: PropertiesLayer
   NodeModulesLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -27,6 +35,7 @@ Resources:
       Layers:
         - !Ref CommonLayer
         - !Ref NodeModulesLayer
+        - !Ref PropertiesLayer
       Events:
         Refresh:
           Type: Schedule

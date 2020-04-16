@@ -1,8 +1,8 @@
 import axios from 'axios'
-import { Jumoresque, VkResponse } from '../../domain/domain'
-import properties from '../../props/properties'
+import { Jumoresque, VkResponse } from '../..'
+import properties from 'properties'
 
-export default async function fetchJumoresques (domain: string): Promise<Jumoresque[]> {
+export async function fetchJumoresques (domain: string): Promise<Jumoresque[]> {
   const awaitedProps = await properties
   const accessToken: string = awaitedProps.vk.accessToken
   const version: string = awaitedProps.vk.apiVersion

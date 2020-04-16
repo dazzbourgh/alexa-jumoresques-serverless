@@ -1,4 +1,4 @@
-import props from '../env.json'
+import props from '../common/env.json'
 import prepareProperties from './prepare-properties'
 
 const def = JSON.parse(JSON.stringify(props.default))
@@ -6,6 +6,4 @@ const def = JSON.parse(JSON.stringify(props.default))
 // @ts-ignore
 const environment = props[process.env.ENVIRONMENT]
 
-const properties = prepareProperties(Object.assign(def, environment))
-
-export default properties
+export const properties = prepareProperties(Object.assign(def, environment))

@@ -1,4 +1,4 @@
-import {putObject} from "../../../../../src/common/util/aws/s3/s3";
+import { putObject } from "common";
 import S3 from "aws-sdk/clients/s3";
 
 const buffer = new Buffer('some buffer', 'utf8');

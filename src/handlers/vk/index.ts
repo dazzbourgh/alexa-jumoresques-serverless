@@ -1,11 +1,7 @@
-import fetchJumoresques from '../../common/util/vk/fetch-jumoresques'
-import { Jumoresque } from '../../common/domain/domain'
-import textToSpeech from '../../common/util/aws/polly/text-to-speech'
 import AWS from 'aws-sdk'
-import { putObject } from '../../common/util/aws/s3/s3'
-import properties from '../../common/props/properties'
+import { fetchJumoresques, Jumoresque, mergeText, putObject, textToSpeech } from 'common'
 import { AudioStream } from 'aws-sdk/clients/polly'
-import { mergeText } from '../../common/util/generic/generic-utils'
+import properties from 'properties'
 
 export const handler = async (): Promise<void> => {
   const awaitedProps = await properties

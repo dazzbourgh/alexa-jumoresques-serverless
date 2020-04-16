@@ -1,17 +1,14 @@
-import fetchJumoresques from '../../../../src/common/util/vk/fetch-jumoresques'
-import { Jumoresque, VkResponse } from '../../../../src/common/domain/domain'
 import axios from 'axios'
-import * as props from "../../../../src/common/props/properties"
+import properties from 'properties'
+import { fetchJumoresques, Jumoresque, VkResponse } from 'common'
 
 jest.mock('axios')
-Object.defineProperty(props, 'default', {
-  value: {
-    vk: {
-      accessToken: '',
-      apiVersion: ''
-    }
-  }
-})
+jest.mock('properties', () => ({
+  __esModule: true,
+  default: Promise.resolve({
+    vk: {}
+  })
+}))
 
 const mockVkResponse: VkResponse = {
   response: {
@@ -33,6 +30,10 @@ const mockVkResponse: VkResponse = {
 const mockResponse = {
   data: mockVkResponse
 }
+
+Object.defineProperty(properties, 'default', {
+  get: Promise.resolve
+});
 
 const jumoresques: Jumoresque[] = [{
   text: 'some text',
