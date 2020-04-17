@@ -12,10 +12,6 @@ phases:
       - mkdir common_layer
       - mkdir common_layer/nodejs
       - cp -RL node_modules common_layer/nodejs
-      - cp -RL dist/common common_layer/nodejs
-      - cp -RL dist/properties common_layer/nodejs
-      - cp src/common/package.json dist/common/package.json
-      - cp src/properties/package.json dist/common/package.json
       - aws cloudformation package --template-file template.yml --s3-bucket jumoresques-lambda-bucket --output-template-file packaged-template.yml
 artifacts:
   files:
