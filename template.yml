@@ -2,14 +2,12 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Fetches jumoresques and reads them out loud in funny voice
 Resources:
-  NodeModulesLayer:
+  CommonModulesLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
       CompatibleRuntimes:
         - nodejs12.x
-      ContentUri: nodejs
-      Description: node_modules directory containing all dependencies
-      LayerName: NodeModulesLayer
+      ContentUri: common_layer
   RefreshJumoresquesHandler:
     Type: AWS::Serverless::Function
     Properties:
@@ -17,7 +15,7 @@ Resources:
       Runtime: nodejs12.x
       CodeUri: dist/handlers/vk
       Layers:
-        - !Ref NodeModulesLayer
+        - !Ref CommonModulesLayer
       Events:
         Refresh:
           Type: Schedule
