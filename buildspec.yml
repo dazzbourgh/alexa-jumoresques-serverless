@@ -9,8 +9,8 @@ phases:
       - npm run build
 #     a workaround for timestamps before 1980
       - find ./node_modules -type f -exec touch {} +
-      - mkdir nodejs
-      - mv node_modules nodejs/node_modules
+      - mkdir ./nodejs
+      - mv ./node_modules ./nodejs/node_modules
       - aws cloudformation package --template-file template.yml --s3-bucket jumoresques-lambda-bucket --output-template-file packaged-template.yml
 artifacts:
   files:
