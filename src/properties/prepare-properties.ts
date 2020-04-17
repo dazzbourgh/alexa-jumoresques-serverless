@@ -25,8 +25,8 @@ const environmentVariableReplacingFunction: ReplacingFunction = async (obj, key)
   return false
 }
 
-const awsSecretReplacer: ReplacingFunction = async (obj, key) => {
-  const regex = /^#([a-zA-Z/_]+).([a-zA-Z/_])/
+export const awsSecretReplacer: ReplacingFunction = async (obj, key) => {
+  const regex = /^#([a-zA-Z/_]+).([a-zA-Z/_]+)/
   const initValue = obj[key] as string
   const match = regex.exec(initValue)
   if (match !== null) {
