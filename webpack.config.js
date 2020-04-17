@@ -30,6 +30,7 @@ module.exports = {
     },
     output: {
         filename: '[name]/index.js',
-        path: path.join(__dirname, '/dist')
+        path: path.join(__dirname, '/dist'),
+        libraryTarget: 'commonjs'
     }
 }
