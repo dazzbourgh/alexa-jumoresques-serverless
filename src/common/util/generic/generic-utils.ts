@@ -1,8 +1,9 @@
-import { Jumoresque } from '../..'
 import { Item } from '../../domain/domain'
 
-export function mergeText (jumoresques: Jumoresque[]): string {
-  return jumoresques.reduce((prev, cur) => `${prev}\n\n${cur.text}`, '')
-}
-
 export const noAttachments = (item: Item): boolean => item.attachments === undefined
+
+export const shorterThan1500Characters = (item: Item): boolean => item.text.length < 1500
+
+export const byLikesDescending = (item1: Item, item2: Item): number => item2.likes.count - item1.likes.count
+
+export const toText = (item: Item): string => item.text

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import properties from 'properties'
-import { fetchJumoresques, Jumoresque, VkResponse } from 'common'
+import { fetchVkWall, Jumoresque, VkResponse } from 'common'
 
 jest.mock('axios')
 jest.mock('properties', () => ({
@@ -46,6 +46,6 @@ const jumoresques: Jumoresque[] = [{
 test('should fetch jumoresques from vk', async () => {
   // @ts-ignore
   axios.get.mockResolvedValue(mockResponse)
-  const actual = await fetchJumoresques('jumoreski')
+  const actual = await fetchVkWall('jumoreski')
   expect(actual).toStrictEqual(jumoresques)
 })

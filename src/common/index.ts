@@ -1,14 +1,10 @@
 import { putObject } from './util/aws/s3/s3'
-import { textToSpeech } from './util/aws/polly/text-to-speech'
-import { mergeText } from './util/generic/generic-utils'
-import { fetchJumoresques } from './util/vk/fetch-jumoresques'
+import { fetchVkWall } from './util/vk/fetch-vk-wall'
 import { VkResponse, Jumoresque } from './domain/domain'
 
 export {
   putObject,
-  textToSpeech,
-  mergeText,
-  fetchJumoresques,
+  fetchVkWall,
   VkResponse,
   Jumoresque
 }
