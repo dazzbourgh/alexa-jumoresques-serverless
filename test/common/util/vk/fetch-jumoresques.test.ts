@@ -6,7 +6,10 @@ jest.mock('axios')
 jest.mock('properties', () => ({
   __esModule: true,
   default: Promise.resolve({
-    vk: {}
+    vk: {
+      accessToken: '2d523c7a2d523c7a2d523c7a5d2d22249822d522d523c7a7332ad8a1f5a050425ea6a7f',
+      apiVersion: '5.103'
+    }
   })
 }))
 
@@ -43,6 +46,6 @@ const jumoresques: Jumoresque[] = [{
 test('should fetch jumoresques from vk', async () => {
   // @ts-ignore
   axios.get.mockResolvedValue(mockResponse)
-  const actual = fetchJumoresques('jumoresques')
-  await expect(actual).resolves.toStrictEqual(jumoresques)
+  const actual = await fetchJumoresques('jumoreski')
+  expect(actual).toStrictEqual(jumoresques)
 })
