@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { Jumoresque, VkResponse } from '../..'
 import properties from 'properties'
+import { noAttachments } from '../generic/generic-utils'
 
 export async function fetchJumoresques (domain: string): Promise<Jumoresque[]> {
   const awaitedProps = await properties
@@ -11,7 +12,8 @@ export async function fetchJumoresques (domain: string): Promise<Jumoresque[]> {
         `&access_token=${accessToken}` +
         `&v=${version}` +
         '&count=50')
-  return response.data.response.items.map((item) => ({
+  const items = response.data.response.items.filter(noAttachments)
+  return items.map((item) => ({
     text: item.text,
     likes: item.likes.count
   }))

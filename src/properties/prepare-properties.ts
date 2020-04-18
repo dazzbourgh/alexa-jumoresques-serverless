@@ -26,7 +26,7 @@ const environmentVariableReplacingFunction: ReplacingFunction = async (obj, key)
 }
 
 export const awsSecretReplacer: ReplacingFunction = async (obj, key) => {
-  const regex = /^#([a-zA-Z/_]+).([a-zA-Z/_]+)/
+  const regex = /^#([a-zA-Z/:\-_0-9]+).([a-zA-Z/_]+)$/
   const initValue = obj[key] as string
   const match = regex.exec(initValue)
   if (match !== null) {
@@ -36,8 +36,6 @@ export const awsSecretReplacer: ReplacingFunction = async (obj, key) => {
     })
     const secret = await client.getSecretValue({ SecretId: match[1] })
       .promise()
-    // todo: fix secret retrieval
-      .catch(() => ({ SecretString: `{"accessToken": "${process.env.vkAccessToken}"}` }))
     const secretValue = secret.SecretString
     if (secretValue === undefined) {
       throw new Error(`No AWS secret found for key: ${initValue}`)

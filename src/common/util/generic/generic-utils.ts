@@ -1,8 +1,8 @@
 import { Jumoresque } from '../..'
+import { Item } from '../../domain/domain'
 
 export function mergeText (jumoresques: Jumoresque[]): string {
-  return jumoresques
-    .sort((a, b) => b.likes - a.likes)
-    .slice(0, 5)
-    .reduce((prev, cur) => `${prev}\n\n${cur.text}`, '')
+  return jumoresques.reduce((prev, cur) => `${prev}\n\n${cur.text}`, '')
 }
+
+export const noAttachments = (item: Item): boolean => item.attachments === undefined
