@@ -34,7 +34,9 @@ export const awsSecretReplacer: ReplacingFunction = async (obj, key) => {
       // todo: replace dynamically
       region: 'us-west-1'
     })
-    const secret = await client.getSecretValue({ SecretId: match[1] })
+    const params = { SecretId: match[1] }
+    console.log(`Getting secret with params: ${JSON.stringify(params)}`)
+    const secret = await client.getSecretValue(params)
       .promise()
     const secretValue = secret.SecretString
     if (secretValue === undefined) {
