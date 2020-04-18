@@ -34,7 +34,10 @@ export const awsSecretReplacer: ReplacingFunction = async (obj, key) => {
       // todo: replace dynamically
       region: 'us-west-1'
     })
-    const secret = await client.getSecretValue({ SecretId: match[1] }).promise()
+    const secret = await client.getSecretValue({ SecretId: match[1] })
+      .promise()
+    // todo: fix secret retrieval
+      .catch(() => ({ SecretString: `{"accessToken": "${process.env.vkAccessToken}"}` }))
     const secretValue = secret.SecretString
     if (secretValue === undefined) {
       throw new Error(`No AWS secret found for key: ${initValue}`)
