@@ -12,7 +12,10 @@ export const handler = async (): Promise<void> => {
 
   const s3Client = new AWS.S3()
   const jumoresques: Jumoresque[] = await fetchJumoresques(awaitedProps.vk.domain)
-  const text: string = mergeText(jumoresques)
+  const processedJumoresques = jumoresques
+    .sort((a, b) => b.likes - a.likes)
+    .slice(0, 5)
+  const text: string = mergeText(processedJumoresques)
   const audio: AudioStream = await textToSpeech(pollyClient)({
     OutputFormat: awaitedProps.aws.polly.outputFormat,
     VoiceId: awaitedProps.aws.polly.voice,
