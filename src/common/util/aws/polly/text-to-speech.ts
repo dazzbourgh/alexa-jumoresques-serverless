@@ -11,7 +11,7 @@ export const toSpeech = (pollyClient: AWS.Polly, params: PartialSynthesizeSpeech
   async (text, index): Promise<AudioStream> => {
     const result = await pollyClient.synthesizeSpeech({
       ...params,
-      Text: `${index}-${text}`
+      Text: `${text}`
     }).promise()
     // a hack to make types resolve
     return result.AudioStream as unknown as AudioStream
