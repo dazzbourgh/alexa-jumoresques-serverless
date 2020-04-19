@@ -7,8 +7,8 @@ export interface PartialSynthesizeSpeechInput {
   VoiceId: string
 }
 
-export const toSpeech = (pollyClient: AWS.Polly, params: PartialSynthesizeSpeechInput): SynthesizeFunction =>
-  async (text, index): Promise<AudioStream> => {
+export const textToSpeech = (pollyClient: AWS.Polly, params: PartialSynthesizeSpeechInput): SynthesizeFunction =>
+  async (text): Promise<AudioStream> => {
     const result = await pollyClient.synthesizeSpeech({
       ...params,
       Text: `${text}`

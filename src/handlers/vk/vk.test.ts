@@ -1,6 +1,6 @@
 import { Polly, S3 } from 'aws-sdk'
 import { refreshJumoresques } from './vk'
-import { VkResponse } from 'common'
+import { VkResponse, promise } from 'common'
 
 describe('vk handler', () => {
   test('should refresh jumoresques', async () => {
@@ -49,8 +49,4 @@ describe('vk handler', () => {
     // @ts-ignore
     expect(s3.putObject.mock.calls[0][0].Body).toEqual(audioStream)
   })
-})
-
-const promise: (arg: any) => {promise: () => Promise<any>} = (arg: any) => ({
-  promise: async () => arg
 })

@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk'
 import {
-  PartialSynthesizeSpeechInput, toSpeech, putObject, VkResponse,
+  PartialSynthesizeSpeechInput, textToSpeech, putObject, VkResponse,
   byLikesDescending,
   noAttachments,
   shorterThan1500Characters,
@@ -19,7 +19,7 @@ export const refreshJumoresques = (pollyClient: AWS.Polly,
       .sort(byLikesDescending)
       .slice(0, 5)
       .map(toText)
-      .map(toSpeech(pollyClient, synthesizeGeneralParams)))
+      .map(textToSpeech(pollyClient, synthesizeGeneralParams)))
   for (let i = 0; i < audios.length; i++) {
     await putObject(s3Client)({
       Bucket: props.aws.s3.bucketName,
