@@ -10,7 +10,6 @@ describe('text to speech function', () => {
         AudioStream: audioStream
       }))
     } as unknown as Polly
-    console.log(mockPolly)
     const result = await textToSpeech(mockPolly, {} as unknown as PartialSynthesizeSpeechInput)(textText, 0)
     // @ts-ignore
     expect(mockPolly.synthesizeSpeech.mock.calls[0][0].Text).toEqual(textText)
