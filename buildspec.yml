@@ -5,6 +5,7 @@ phases:
       nodejs: 12
   build:
     commands:
+      - cd refresher
       - npm install
       - npm run build
 #     a workaround for timestamps before 1980
