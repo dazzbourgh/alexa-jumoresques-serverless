@@ -1,4 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
 Parameters:
   SkillId:
     Type: String
@@ -36,16 +37,17 @@ Resources:
                     - logs:*
                   Resource: arn:aws:logs:*:*:*
   AlexaSkillFunction:
-    Type: AWS::Lambda::Function
+    Type: AWS::Serverless::Function
     Properties:
       Code:
         S3Bucket: !Ref CodeBucket
         S3Key: !Ref CodeKey
         S3ObjectVersion: !Ref CodeVersion
-      Handler: !Ref LambdaHandler
+#      Handler: !Ref LambdaHandler
+      Handler: dist/src/index.handler
       Runtime: !Ref LambdaRuntime
       Role: !GetAtt AlexaSkillIAMRole.Arn
-      MemorySize: 512
+      MemorySize: 128
       Timeout: 60
   AlexaSkillFunctionEventPermission:
     Type: AWS::Lambda::Permission
