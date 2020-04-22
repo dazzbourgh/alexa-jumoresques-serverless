@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Fetches jumoresques and reads them out loud in funny voice
+Resources:
+  CommonModulesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - nodejs12.x
+      ContentUri: common_layer
+  RefreshJumoresquesHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs12.x
+      CodeUri: dist/handlers/vk
+      Layers:
+        - !Ref CommonModulesLayer
+      Events:
+        Refresh:
+          Type: Schedule
+          Properties:
+            Schedule: 'rate(1 hour)'
+            Name: RefreshJumoresquesSchedule
+            Description: Triggers refresh handler for jumoresques
+            Enabled: true
+      Environment:
+        Variables:
+          ENVIRONMENT: production
+
