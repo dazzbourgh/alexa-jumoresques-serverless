@@ -15,9 +15,7 @@ const controller = {
       .withShouldEndSession(true)
     for (let i = 0; i < 5; i++) {
       const jumoresqueUrl = `${bucketUrl}/${i}-${awaitedProps.key}`
-      builder
-        .speak(`Jumoresque ${i + 1}`)
-        .addAudioPlayerPlayDirective(playBehavior, jumoresqueUrl, jumoresqueUrl, 0)
+      builder.addAudioPlayerPlayDirective(playBehavior, jumoresqueUrl, jumoresqueUrl, 0)
     }
     return builder.getResponse()
   },

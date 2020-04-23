@@ -24,7 +24,8 @@ export const refreshJumoresques = (pollyClient: AWS.Polly,
     await putObject(s3Client)({
       Bucket: props.aws.s3.bucketName,
       Key: `${i}-${props.aws.s3.key}`,
-      Body: audios[i]
+      Body: audios[i],
+      ACL: 'public-read'
     })
   }
 }
