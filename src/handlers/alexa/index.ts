@@ -8,14 +8,18 @@ const controller = {
   async play (handlerInput: HandlerInput) {
     const playBehavior = 'REPLACE_ALL'
     const awaitedProps = (await properties).aws.s3
-    const url = `https://${awaitedProps.bucketName}.s3-us-west-1.amazonaws.com/${awaitedProps.key}`
+    const bucketUrl = `https://${awaitedProps.bucketName}.s3-us-west-1.amazonaws.com`
 
-    handlerInput.responseBuilder
+    const builder = handlerInput.responseBuilder
       .speak('Here are some jumoresques:')
       .withShouldEndSession(true)
-      .addAudioPlayerPlayDirective(playBehavior, url, url, 0)
-
-    return handlerInput.responseBuilder.getResponse()
+    for (let i = 0; i < 5; i++) {
+      const jumoresqueUrl = `${bucketUrl}/${i}-${awaitedProps.key}`
+      builder
+        .speak(`Jumoresque ${i + 1}`)
+        .addAudioPlayerPlayDirective(playBehavior, jumoresqueUrl, jumoresqueUrl, 0)
+    }
+    return builder.getResponse()
   },
   stop (handlerInput: HandlerInput) {
     return handlerInput.responseBuilder
@@ -38,7 +42,7 @@ const ErrorHandler: CustomSkillErrorHandler = {
     return true
   },
   handle (handlerInput: HandlerInput, error: Error) {
-    const speakOutput = `${(error.stack ?? '').toString().substring(0, 120)}`
+    const speakOutput = (error.stack ?? '').toString()
 
     return handlerInput.responseBuilder
       .speak(speakOutput)

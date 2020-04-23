@@ -24,17 +24,57 @@ Resources:
             Name: RefreshJumoresquesSchedule
             Description: Triggers refresh handler for jumoresques
             Enabled: true
-#  AlexaSkillHandler:
-#    Type: AWS::Serverless::Function
-#    Properties:
-#      Handler: alexa-skill-handler.handler
-#      Runtime: nodejs12.x
-#      CodeUri: ./dist/functions/handlers
-#      Events:
-#        Refresh:
-#          Type: Schedule
-#          Properties:
-#            Schedule: 'rate(1 hour)'
-#            Name: RefreshJumoresquesSchedule
-#            Description: Triggers refresh handler for jumoresques
-#            Enabled: true
+
+  AlexaSkillIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: alexaSkillExecutionPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:*
+                Resource: arn:aws:logs:*:*:*
+        - PolicyName: s3ReadAccess
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                Resource: arn:aws:s3:::jumoresques/jumoresques.mp3
+  AlexaSkillFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: dist/handlers/alexa
+      Handler: index.handler
+      Layers:
+        - !Ref CommonModulesLayer
+      Runtime: nodejs12.x
+      Role: !GetAtt AlexaSkillIAMRole.Arn
+      MemorySize: 128
+      Timeout: 60
+  AlexaSkillFunctionEventPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName: !GetAtt AlexaSkillFunction.Arn
+      Principal: alexa-appkit.amazon.com
+      EventSourceToken: amzn1.ask.skill.3eff6c78-ec5a-4d43-80ea-430bbe3d37d1
+Outputs:
+  SkillEndpoint:
+    Description: LambdaARN for the regional endpoint
+    Value: !GetAtt AlexaSkillFunction.Arn
+
