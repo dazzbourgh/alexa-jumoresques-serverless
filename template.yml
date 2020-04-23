@@ -47,7 +47,7 @@ Resources:
                 Action:
                   - logs:*
                 Resource: arn:aws:logs:*:*:*
-        - PolicyName: s3ReadAccess
+        - PolicyName: s3JumoresquesReadAccess
           PolicyDocument:
             Version: 2012-10-17
             Statement:
