@@ -56,13 +56,13 @@ Resources:
                   - s3:GetObject
                 Resource: arn:aws:s3:::jumoresques/jumoresques.mp3
         - PolicyName: secretManagerJumoresquesReadAccess
-            PolicyDocument:
-              Version: 2012-10-17
-              Statement:
-                - Effect: Allow
-                  Action:
-                    - secretsmanager:GetSecretValue
-                  Resource: arn:aws:secretsmanager:us-west-1:403020287921:secret:vk-BcAwdu
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: arn:aws:secretsmanager:us-west-1:403020287921:secret:vk-BcAwdu
   AlexaSkillFunction:
     Type: AWS::Serverless::Function
     Properties:
