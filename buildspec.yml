@@ -13,6 +13,9 @@ phases:
       - mkdir common_layer/nodejs
       - cp -RL node_modules common_layer/nodejs
       - aws cloudformation package --template-file template.yml --s3-bucket jumoresques-lambda-bucket --output-template-file packaged-template.yml
+      - cd skill
+      - npm run build
+      - ask deploy
 artifacts:
   files:
     - packaged-template.yml
