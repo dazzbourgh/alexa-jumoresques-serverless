@@ -1,0 +1,80 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Fetches jumoresques and reads them out loud in funny voice
+Resources:
+  CommonModulesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - nodejs12.x
+      ContentUri: common_layer
+  RefreshJumoresquesHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs12.x
+      CodeUri: dist/handlers/vk
+      Layers:
+        - !Ref CommonModulesLayer
+      Events:
+        Refresh:
+          Type: Schedule
+          Properties:
+            Schedule: 'rate(1 hour)'
+            Name: RefreshJumoresquesSchedule
+            Description: Triggers refresh handler for jumoresques
+            Enabled: true
+
+  AlexaSkillIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: alexaSkillExecutionPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:*
+                Resource: arn:aws:logs:*:*:*
+        - PolicyName: s3ReadAccess
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                Resource: arn:aws:s3:::jumoresques/jumoresques.mp3
+  AlexaSkillFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: dist/handlers/alexa
+      Handler: index.handler
+      Layers:
+        - !Ref CommonModulesLayer
+      Runtime: nodejs12.x
+      Role: !GetAtt AlexaSkillIAMRole.Arn
+      MemorySize: 128
+      Timeout: 60
+  AlexaSkillFunctionEventPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName: !GetAtt AlexaSkillFunction.Arn
+      Principal: alexa-appkit.amazon.com
+      EventSourceToken: amzn1.ask.skill.3eff6c78-ec5a-4d43-80ea-430bbe3d37d1
+Outputs:
+  SkillEndpoint:
+    Description: LambdaARN for the regional endpoint
+    Value: !GetAtt AlexaSkillFunction.Arn
+
