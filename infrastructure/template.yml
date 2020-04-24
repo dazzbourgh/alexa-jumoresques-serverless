@@ -7,13 +7,13 @@ Resources:
     Properties:
       CompatibleRuntimes:
         - nodejs12.x
-      ContentUri: common_layer
+      ContentUri: ../common_layer
   RefreshJumoresquesHandler:
     Type: AWS::Serverless::Function
     Properties:
       Handler: index.handler
       Runtime: nodejs12.x
-      CodeUri: dist/handlers/vk
+      CodeUri: ../dist/handlers/vk
       Layers:
         - !Ref CommonModulesLayer
       Events:
@@ -24,7 +24,6 @@ Resources:
             Name: RefreshJumoresquesSchedule
             Description: Triggers refresh handler for jumoresques
             Enabled: true
-
   AlexaSkillIAMRole:
     Type: AWS::IAM::Role
     Properties:
@@ -66,7 +65,7 @@ Resources:
   AlexaSkillFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: dist/handlers/alexa
+      CodeUri: ../dist/handlers/alexa
       Handler: index.handler
       Layers:
         - !Ref CommonModulesLayer
@@ -81,8 +80,25 @@ Resources:
       FunctionName: !GetAtt AlexaSkillFunction.Arn
       Principal: alexa-appkit.amazon.com
       EventSourceToken: amzn1.ask.skill.3eff6c78-ec5a-4d43-80ea-430bbe3d37d1
-Outputs:
-  SkillEndpoint:
-    Description: LambdaARN for the regional endpoint
-    Value: !GetAtt AlexaSkillFunction.Arn
-
+  JumoresquesMp3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: jumoresques
+      NotificationConfiguration:
+        QueueConfigurations:
+          - Event: s3:ObjectCreated:*
+            Queue: !GetAtt JumoresquesMp3Queue.Arn
+  JumoresquesMp3Queue:
+    Type: AWS::SQS::Queue
+  YandexMp3UploadFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      CodeUri: ../dist/handlers/yandex
+      Runtime: nodejs12.x
+      Events:
+        JumoresquesUploadEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt JumoresquesMp3Queue.Arn
+            BatchSize: 1
