@@ -9,14 +9,13 @@ const controller = {
     const playBehavior = 'REPLACE_ALL'
     const awaitedProps = (await properties).aws.s3
     const bucketUrl = `https://${awaitedProps.bucketName}.s3-us-west-1.amazonaws.com`
+    const jumoresqueUrl = `${bucketUrl}/${awaitedProps.key}`
 
     const builder = handlerInput.responseBuilder
       .speak('Here are some jumoresques:')
       .withShouldEndSession(true)
-    for (let i = 0; i < 5; i++) {
-      const jumoresqueUrl = `${bucketUrl}/${i}-${awaitedProps.key}`
-      builder.addAudioPlayerPlayDirective(playBehavior, jumoresqueUrl, jumoresqueUrl, 0)
-    }
+      .addAudioPlayerPlayDirective(playBehavior, jumoresqueUrl, jumoresqueUrl, 0)
+
     return builder.getResponse()
   },
   stop (handlerInput: HandlerInput) {
