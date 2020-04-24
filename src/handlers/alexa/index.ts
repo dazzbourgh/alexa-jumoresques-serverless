@@ -39,7 +39,8 @@ const ErrorHandler: CustomSkillErrorHandler = {
     return true
   },
   handle (handlerInput: HandlerInput, error: Error) {
-    const speakOutput = (error.stack ?? '').toString()
+    console.error(error)
+    const speakOutput = 'No new jokes are available at this moment'
 
     return handlerInput.responseBuilder
       .speak(speakOutput)
