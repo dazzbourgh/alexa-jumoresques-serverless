@@ -1,4 +1,4 @@
-import { byLikesDescending, noAttachments, shorterThan1500Characters, toText } from './generic-utils'
+import { byLikesDescending, concatAudioBuffers, noAttachments, shorterThan1500Characters, toText } from './generic-utils'
 import { Item } from 'src/common/domain/domain'
 
 describe('util functions', () => {
@@ -19,5 +19,15 @@ describe('util functions', () => {
     const text = 'short'
     const item = { text: text }
     expect(toText(item as Item)).toBe(text)
+  })
+  test('should merge two mp3 files', () => {
+    const one = new Uint8Array([1])
+    const two = new Uint8Array([2])
+    const expected = {
+      type: 'Buffer',
+      data: [1, 2]
+    }
+    const result = JSON.parse(JSON.stringify(concatAudioBuffers(one, two)))
+    expect(result).toStrictEqual(expected)
   })
 })

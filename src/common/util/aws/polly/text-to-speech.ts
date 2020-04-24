@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk'
 import { AudioStream } from 'aws-sdk/clients/polly'
 
-type SynthesizeFunction = (text: string, index: number) => Promise<AudioStream>;
+type SynthesizeFunction = (text: string) => Promise<AudioStream>;
 export interface PartialSynthesizeSpeechInput {
   OutputFormat: string
   VoiceId: string

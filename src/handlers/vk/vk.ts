@@ -1,11 +1,16 @@
 import AWS from 'aws-sdk'
 import {
-  PartialSynthesizeSpeechInput, textToSpeech, putObject, VkResponse,
   byLikesDescending,
   noAttachments,
+  PartialSynthesizeSpeechInput,
+  putObject,
   shorterThan1500Characters,
-  toText
+  textToSpeech,
+  toText,
+  VkResponse,
+  concatAudioBuffers
 } from 'common'
+
 type JumoresquePipeline = (vkResponse: VkResponse) => void
 
 export const refreshJumoresques = (pollyClient: AWS.Polly,
@@ -20,12 +25,11 @@ export const refreshJumoresques = (pollyClient: AWS.Polly,
       .slice(0, 5)
       .map(toText)
       .map(textToSpeech(pollyClient, synthesizeGeneralParams)))
-  for (let i = 0; i < audios.length; i++) {
-    await putObject(s3Client)({
-      Bucket: props.aws.s3.bucketName,
-      Key: `${i}-${props.aws.s3.key}`,
-      Body: audios[i],
-      ACL: 'public-read'
-    })
-  }
+  const mergedAudio = audios.reduce(concatAudioBuffers)
+  await putObject(s3Client)({
+    Bucket: props.aws.s3.bucketName,
+    Key: props.aws.s3.key,
+    Body: mergedAudio,
+    ACL: 'public-read'
+  })
 }
