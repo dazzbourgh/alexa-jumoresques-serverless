@@ -80,31 +80,6 @@ Resources:
       FunctionName: !GetAtt AlexaSkillFunction.Arn
       Principal: alexa-appkit.amazon.com
       EventSourceToken: amzn1.ask.skill.3eff6c78-ec5a-4d43-80ea-430bbe3d37d1
-  JumoresquesMp3Bucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: jumoresques
-      NotificationConfiguration:
-        QueueConfigurations:
-          - Event: s3:ObjectCreated:*
-            Queue: !GetAtt JumoresquesMp3Queue.Arn
-  JumoresquesMp3Queue:
-    Type: AWS::SQS::Queue
-  JumoresquesMp3QueueSendMessagePolicy:
-    Type: AWS::SQS::QueuePolicy
-    Properties:
-      PolicyDocument:
-        Version: 2012-10-17
-        Id: JumoresquesMp3QueueSendMessagePolicy
-        Statement:
-          - Sid: Allow-SQS-SendMessage
-            Effect: Allow
-            Service: s3.amazonaws.com
-            Action:
-              - sqs:SendMessage
-            Resource: !GetAtt JumoresquesMp3Queue.Arn
-      Queues:
-        - !Ref JumoresquesMp3Queue
   YandexMp3UploadFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -115,5 +90,5 @@ Resources:
         JumoresquesUploadEvent:
           Type: SQS
           Properties:
-            Queue: !GetAtt JumoresquesMp3Queue.Arn
+            Queue: arn:aws:sqs:us-west-1:403020287921:jumoresques-mp3-uploads
             BatchSize: 1
