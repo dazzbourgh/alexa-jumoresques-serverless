@@ -98,11 +98,11 @@ Resources:
         Id: JumoresquesMp3QueueSendMessagePolicy
         Statement:
           - Sid: Allow-SQS-SendMessage
-          Effect: Allow
-          Service: s3.amazonaws.com
-          Action:
-            - sqs:SendMessage
-          Resource: !GetAtt JumoresquesMp3Queue.Arn
+            Effect: Allow
+            Service: s3.amazonaws.com
+            Action:
+              - sqs:SendMessage
+            Resource: !GetAtt JumoresquesMp3Queue.Arn
       Queues:
         - !GetAtt JumoresquesMp3Queue.Arn
   YandexMp3UploadFunction:
