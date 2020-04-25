@@ -90,6 +90,21 @@ Resources:
             Queue: !GetAtt JumoresquesMp3Queue.Arn
   JumoresquesMp3Queue:
     Type: AWS::SQS::Queue
+  JumoresquesMp3QueueSendMessagePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Id: JumoresquesMp3QueueSendMessagePolicy
+        Statement:
+          - Sid: Allow-SQS-SendMessage
+          Effect: Allow
+          Service: s3.amazonaws.com
+          Action:
+            - sqs:SendMessage
+          Resource: !GetAtt JumoresquesMp3Queue.Arn
+      Queues:
+        - !GetAtt JumoresquesMp3Queue.Arn
   YandexMp3UploadFunction:
     Type: AWS::Serverless::Function
     Properties:
