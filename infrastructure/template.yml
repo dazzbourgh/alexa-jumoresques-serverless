@@ -83,12 +83,47 @@ Resources:
   YandexMp3UploadFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: index.handler
+      Handler: index.upload
       CodeUri: ../dist/handlers/yandex
       Runtime: nodejs12.x
+      Policies:
+        - DynamoDBWritePolicy:
+            TableName:
+              !GetAtt Mp3IdDynamoTable.Arn
       Events:
         JumoresquesUploadEvent:
           Type: SQS
           Properties:
             Queue: arn:aws:sqs:us-west-1:403020287921:jumoresques-mp3-uploads
             BatchSize: 1
+  YandexMp3PlayFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.playSound
+      CodeUri: ../dist/handlers/yandex
+      Runtime: nodejs12.x
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName:
+              !GetAtt Mp3IdDynamoTable.Arn
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Method: post
+            Path: /
+  Mp3IdDynamoTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: key
+          AttributeType: S
+        - AttributeName: value
+          AttributeType: S
+      KeySchema:
+        - AttributeName: key
+          KeyType: HASH
+        - AttributeName: value
+          KeyType: RANGE
+      TableName: jumoresques
+      BillingMode: PAY_PER_REQUEST
