@@ -1,7 +1,28 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Fetches jumoresques and reads them out loud in funny voice
+Parameters:
+  Env:
+    Type: String
 Resources:
+  Mp3Bucket:
+    Type: AWS::S3::Bucket
+  Mp3IdDynamoTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: key
+          AttributeType: S
+        - AttributeName: value
+          AttributeType: S
+      KeySchema:
+        - AttributeName: key
+          KeyType: HASH
+        - AttributeName: value
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+  Mp3Sqs:
+    Type: AWS::SQS::Queue
   CommonModulesLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -16,6 +37,20 @@ Resources:
       CodeUri: ../dist/handlers/vk
       Layers:
         - !Ref CommonModulesLayer
+      Environment:
+        Variables:
+          BUCKET: !Ref Mp3Bucket
+          ENVIRONMENT: production
+          FUNCTION_NAME: refresher
+      Policies:
+        - S3ReadPolicy:
+            BucketName:
+              !Ref Mp3Bucket
+        - SQSSendMessagePolicy:
+            QueueName:
+              !GetAtt Mp3Sqs.QueueName
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: arn:aws:secretsmanager:us-west-1:403020287921:secret:vk-BcAwdu
       Events:
         Refresh:
           Type: Schedule
@@ -80,40 +115,54 @@ Resources:
       FunctionName: !GetAtt AlexaSkillFunction.Arn
       Principal: alexa-appkit.amazon.com
       EventSourceToken: amzn1.ask.skill.3eff6c78-ec5a-4d43-80ea-430bbe3d37d1
-  JumoresquesMp3Bucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: jumoresques
-      NotificationConfiguration:
-        QueueConfigurations:
-          - Event: s3:ObjectCreated:*
-            Queue: !GetAtt JumoresquesMp3Queue.Arn
-  JumoresquesMp3Queue:
-    Type: AWS::SQS::Queue
-  JumoresquesMp3QueueSendMessagePolicy:
-    Type: AWS::SQS::QueuePolicy
-    Properties:
-      PolicyDocument:
-        Version: 2012-10-17
-        Id: JumoresquesMp3QueueSendMessagePolicy
-        Statement:
-          - Sid: Allow-SQS-SendMessage
-            Effect: Allow
-            Service: s3.amazonaws.com
-            Action:
-              - sqs:SendMessage
-            Resource: !GetAtt JumoresquesMp3Queue.Arn
-      Queues:
-        - !Ref JumoresquesMp3Queue
   YandexMp3UploadFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: index.handler
+      Handler: index.upload
       CodeUri: ../dist/handlers/yandex
       Runtime: nodejs12.x
+      Policies:
+        - DynamoDBWritePolicy:
+            TableName:
+              !GetAtt Mp3IdDynamoTable.Arn
+        - S3ReadPolicy:
+            BucketName:
+              !Ref Mp3Bucket
+        - SQSPollerPolicy:
+            QueueName:
+              !GetAtt Mp3Sqs.QueueName
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: arn:aws:secretsmanager:us-west-1:403020287921:secret:yandex-TYwPDV
+      Environment:
+        Variables:
+          TABLE: !Ref Mp3IdDynamoTable
+          BUCKET: !Ref Mp3Bucket
+          ENVIRONMENT: production
+          FUNCTION_NAME: yandex-upload-handler
       Events:
         JumoresquesUploadEvent:
           Type: SQS
           Properties:
-            Queue: !GetAtt JumoresquesMp3Queue.Arn
+            Queue: !GetAtt Mp3Sqs.Arn
             BatchSize: 1
+  YandexMp3PlayFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.playSound
+      CodeUri: ../dist/handlers/yandex
+      Runtime: nodejs12.x
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName:
+              !GetAtt Mp3IdDynamoTable.Arn
+      Environment:
+        Variables:
+          TABLE: !Ref Mp3IdDynamoTable
+          ENVIRONMENT: production
+          FUNCTION_NAME: yandex-alisa-handler
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Method: post
+            Path: /

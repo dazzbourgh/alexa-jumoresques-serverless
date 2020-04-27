@@ -11,3 +11,4 @@ rules:
   require-await: off
   '@typescript-eslint/require-await': off
   '@typescript-eslint/restrict-template-expressions': off
+  '@typescript-eslint/strict-boolean-expressions': off
