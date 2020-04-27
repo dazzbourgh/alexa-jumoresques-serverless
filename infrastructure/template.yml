@@ -1,7 +1,28 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Fetches jumoresques and reads them out loud in funny voice
+Parameters:
+  Env:
+    Type: String
 Resources:
+  Mp3Bucket:
+    Type: AWS::S3::Bucket
+  Mp3IdDynamoTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: key
+          AttributeType: S
+        - AttributeName: value
+          AttributeType: S
+      KeySchema:
+        - AttributeName: key
+          KeyType: HASH
+        - AttributeName: value
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+  Mp3Sqs:
+    Type: AWS::SQS::Queue
   CommonModulesLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -16,6 +37,16 @@ Resources:
       CodeUri: ../dist/handlers/vk
       Layers:
         - !Ref CommonModulesLayer
+      Environment:
+        Variables:
+          BUCKET: !Ref Mp3Bucket
+      Policies:
+        - S3ReadPolicy:
+            BucketName:
+              !Ref Mp3Bucket
+        - SQSSendMessagePolicy:
+            QueueName:
+              !GetAtt Mp3Sqs.QueueName
       Events:
         Refresh:
           Type: Schedule
@@ -90,11 +121,23 @@ Resources:
         - DynamoDBWritePolicy:
             TableName:
               !GetAtt Mp3IdDynamoTable.Arn
+        - S3ReadPolicy:
+            BucketName:
+              !Ref Mp3Bucket
+        - SQSPollerPolicy:
+            QueueName:
+              !GetAtt Mp3Sqs.QueueName
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: arn:aws:secretsmanager:us-west-1:403020287921:secret:yandex-TYwPDV
+      Environment:
+        Variables:
+          TABLE: !Ref Mp3IdDynamoTable
+          BUCKET: !Ref Mp3Bucket
       Events:
         JumoresquesUploadEvent:
           Type: SQS
           Properties:
-            Queue: arn:aws:sqs:us-west-1:403020287921:jumoresques-mp3-uploads
+            Queue: !Ref Mp3Sqs
             BatchSize: 1
   YandexMp3PlayFunction:
     Type: AWS::Serverless::Function
@@ -106,24 +149,12 @@ Resources:
         - DynamoDBReadPolicy:
             TableName:
               !GetAtt Mp3IdDynamoTable.Arn
+      Environment:
+        Variables:
+          TABLE: !Ref Mp3IdDynamoTable
       Events:
         ApiEvent:
           Type: Api
           Properties:
             Method: post
             Path: /
-  Mp3IdDynamoTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      AttributeDefinitions:
-        - AttributeName: key
-          AttributeType: S
-        - AttributeName: value
-          AttributeType: S
-      KeySchema:
-        - AttributeName: key
-          KeyType: HASH
-        - AttributeName: value
-          KeyType: RANGE
-      TableName: jumoresques
-      BillingMode: PAY_PER_REQUEST
