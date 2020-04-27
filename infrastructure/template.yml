@@ -40,6 +40,8 @@ Resources:
       Environment:
         Variables:
           BUCKET: !Ref Mp3Bucket
+          #TODO: remove redundant variable and decompose env.json
+          TABLE: !Ref Mp3IdDynamoTable
       Policies:
         - S3ReadPolicy:
             BucketName:
@@ -154,6 +156,8 @@ Resources:
       Environment:
         Variables:
           TABLE: !Ref Mp3IdDynamoTable
+          #TODO: remove redundant variable and decompose env.json
+          BUCKET: !Ref Mp3Bucket
       Events:
         ApiEvent:
           Type: Api
