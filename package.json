@@ -36,11 +36,13 @@
   },
   "dependencies": {
     "@types/aws-sdk": "^2.7.0",
+    "@types/lodash": "^4.14.150",
     "@types/node": "^13.11.0",
     "ask-sdk": "^2.8.0",
     "aws-sdk": "^2.654.0",
     "axios": "^0.19.2",
     "common": "file:src/common",
+    "lodash": "^4.17.15",
     "properties": "file:src/properties"
   }
 }
