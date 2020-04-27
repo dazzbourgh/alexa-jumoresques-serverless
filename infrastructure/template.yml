@@ -40,8 +40,8 @@ Resources:
       Environment:
         Variables:
           BUCKET: !Ref Mp3Bucket
-          #TODO: remove redundant variable and decompose env.json
-          TABLE: !Ref Mp3IdDynamoTable
+          ENVIRONMENT: production
+          FUNCTION_NAME: refresher
       Policies:
         - S3ReadPolicy:
             BucketName:
@@ -137,6 +137,8 @@ Resources:
         Variables:
           TABLE: !Ref Mp3IdDynamoTable
           BUCKET: !Ref Mp3Bucket
+          ENVIRONMENT: production
+          FUNCTION_NAME: yandex-upload-handler
       Events:
         JumoresquesUploadEvent:
           Type: SQS
@@ -156,8 +158,8 @@ Resources:
       Environment:
         Variables:
           TABLE: !Ref Mp3IdDynamoTable
-          #TODO: remove redundant variable and decompose env.json
-          BUCKET: !Ref Mp3Bucket
+          ENVIRONMENT: production
+          FUNCTION_NAME: yandex-alisa-handler
       Events:
         ApiEvent:
           Type: Api

@@ -1,4 +1,4 @@
-import props from './env.json'
+import initialProps from './env.json'
 import AWS from 'aws-sdk'
 import * as _ from 'lodash'
 
@@ -78,9 +78,9 @@ async function getProperties (props: any): Promise<any> {
   const environment = props[process.env.ENVIRONMENT]
   const secretsManager = new AWS.SecretsManager({
     // @ts-ignore
-    region: props.generic.default[environment].region
+    region: props.generic[environment].region
   })
   return await assembleProperties(environment, secretsManager, process.env.FUNCTION_NAME as string)(props)
 }
 
-export const properties = getProperties(props)
+export const properties = getProperties(initialProps)
