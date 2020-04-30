@@ -2,7 +2,7 @@
 
 npm install
 npm run build
-find ./node_modules -type f -exec touch {} +
+#find ./node_modules -type f -exec touch {} +
 mkdir common_layer
 mkdir common_layer/nodejs
 cp -RL node_modules common_layer/nodejs

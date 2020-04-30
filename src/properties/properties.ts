@@ -74,11 +74,9 @@ export function assembleProperties (environment: string, secretsManager: AWS.Sec
 }
 
 async function getProperties (props: any): Promise<any> {
-  // @ts-ignore
-  const environment = props[process.env.ENVIRONMENT]
+  const environment = process.env.ENVIRONMENT as string
   const secretsManager = new AWS.SecretsManager({
-    // @ts-ignore
-    region: props.generic[environment].region
+    region: props.generic[environment].aws.region
   })
   return await assembleProperties(environment, secretsManager, process.env.FUNCTION_NAME as string)(props)
 }

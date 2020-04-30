@@ -7,6 +7,12 @@ Parameters:
 Resources:
   Mp3Bucket:
     Type: AWS::S3::Bucket
+    Properties:
+      NotificationConfiguration:
+        QueueConfigurations:
+          - Event: s3:ObjectCreated:*
+            Queue: !GetAtt Mp3Sqs.Arn
+    DependsOn: Mp3SqsPolicy
   Mp3IdDynamoTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -23,42 +29,33 @@ Resources:
       BillingMode: PAY_PER_REQUEST
   Mp3Sqs:
     Type: AWS::SQS::Queue
+    Properties:
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt Mp3DeadLetterSqs.Arn
+        maxReceiveCount: 1
+  Mp3DeadLetterSqs:
+    Type: AWS::SQS::Queue
+  Mp3SqsPolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: s3.amazonaws.com
+            Resource:
+              - !GetAtt Mp3Sqs.Arn
+            Action:
+              - SQS:SendMessage
+      Queues:
+        - !Ref Mp3Sqs
   CommonModulesLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
       CompatibleRuntimes:
         - nodejs12.x
       ContentUri: ../common_layer
-  RefreshJumoresquesHandler:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: index.handler
-      Runtime: nodejs12.x
-      CodeUri: ../dist/handlers/vk
-      Layers:
-        - !Ref CommonModulesLayer
-      Environment:
-        Variables:
-          BUCKET: !Ref Mp3Bucket
-          ENVIRONMENT: production
-          FUNCTION_NAME: refresher
-      Policies:
-        - S3ReadPolicy:
-            BucketName:
-              !Ref Mp3Bucket
-        - SQSSendMessagePolicy:
-            QueueName:
-              !GetAtt Mp3Sqs.QueueName
-        - AWSSecretsManagerGetSecretValuePolicy:
-            SecretArn: arn:aws:secretsmanager:us-west-1:403020287921:secret:vk-BcAwdu
-      Events:
-        Refresh:
-          Type: Schedule
-          Properties:
-            Schedule: 'rate(1 hour)'
-            Name: RefreshJumoresquesSchedule
-            Description: Triggers refresh handler for jumoresques
-            Enabled: true
   AlexaSkillIAMRole:
     Type: AWS::IAM::Role
     Properties:
@@ -97,6 +94,55 @@ Resources:
                 Action:
                   - secretsmanager:GetSecretValue
                 Resource: arn:aws:secretsmanager:us-west-1:403020287921:secret:vk-BcAwdu
+  AlexaSkillFunctionEventPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:invokeFunction
+      FunctionName: !GetAtt AlexaSkillFunction.Arn
+      Principal: alexa-appkit.amazon.com
+      EventSourceToken: amzn1.ask.skill.3eff6c78-ec5a-4d43-80ea-430bbe3d37d1
+  PollyReadOnlyAccessPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - polly:SynthesizeSpeech
+            Resource: '*'
+      Roles:
+        - !Ref RefreshJumoresquesHandlerRole
+      PolicyName: PollyReadOnlyAccessPolicy
+  RefreshJumoresquesHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs12.x
+      CodeUri: ../dist/handlers/vk
+      Layers:
+        - !Ref CommonModulesLayer
+      Environment:
+        Variables:
+          BUCKET: !Ref Mp3Bucket
+          ENVIRONMENT: !Ref Env
+          FUNCTION_NAME: refresher
+      Policies:
+        - S3WritePolicy:
+            BucketName:
+              !Ref Mp3Bucket
+        - SQSSendMessagePolicy:
+            QueueName:
+              !GetAtt Mp3Sqs.QueueName
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: arn:aws:secretsmanager:us-west-1:403020287921:secret:vk-BcAwdu
+      Events:
+        Refresh:
+          Type: Schedule
+          Properties:
+            Schedule: 'rate(1 hour)'
+            Description: Triggers refresh handler for jumoresques
+            Enabled: true
   AlexaSkillFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -108,19 +154,18 @@ Resources:
       Role: !GetAtt AlexaSkillIAMRole.Arn
       MemorySize: 128
       Timeout: 60
-  AlexaSkillFunctionEventPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:invokeFunction
-      FunctionName: !GetAtt AlexaSkillFunction.Arn
-      Principal: alexa-appkit.amazon.com
-      EventSourceToken: amzn1.ask.skill.3eff6c78-ec5a-4d43-80ea-430bbe3d37d1
+      Environment:
+        Variables:
+          ENVIRONMENT: !Ref Env
+          FUNCTION_NAME: alexa-handler
   YandexMp3UploadFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: index.upload
       CodeUri: ../dist/handlers/yandex
       Runtime: nodejs12.x
+      Layers:
+        - !Ref CommonModulesLayer
       Policies:
         - DynamoDBWritePolicy:
             TableName:
@@ -137,7 +182,7 @@ Resources:
         Variables:
           TABLE: !Ref Mp3IdDynamoTable
           BUCKET: !Ref Mp3Bucket
-          ENVIRONMENT: production
+          ENVIRONMENT: !Ref Env
           FUNCTION_NAME: yandex-upload-handler
       Events:
         JumoresquesUploadEvent:
@@ -151,6 +196,8 @@ Resources:
       Handler: index.playSound
       CodeUri: ../dist/handlers/yandex
       Runtime: nodejs12.x
+      Layers:
+        - !Ref CommonModulesLayer
       Policies:
         - DynamoDBReadPolicy:
             TableName:
@@ -158,7 +205,7 @@ Resources:
       Environment:
         Variables:
           TABLE: !Ref Mp3IdDynamoTable
-          ENVIRONMENT: production
+          ENVIRONMENT: !Ref Env
           FUNCTION_NAME: yandex-alisa-handler
       Events:
         ApiEvent:

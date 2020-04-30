@@ -9,10 +9,11 @@ import {
 import AWS from 'aws-sdk'
 import properties from 'properties'
 
-export const upload = async (event: S3Notification): Promise<void> => {
+export const upload = async (event: any): Promise<void> => {
   const awaitedProps = await properties
   const s3Client = new AWS.S3()
-  const s3 = event.Records[0].s3
+  const body: S3Notification = JSON.parse(event.Records[0].body)
+  const s3 = body.Records[0].s3
   const dynamoClient = new AWS.DynamoDB()
   const mp3File = await getObject(s3Client)({
     Bucket: s3.bucket.name,
