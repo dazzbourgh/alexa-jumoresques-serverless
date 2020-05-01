@@ -123,9 +123,9 @@ Resources:
   RefreshJumoresquesHandler:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: index.handler
+      Handler: src/index.handler
       Runtime: nodejs12.x
-      CodeUri: ../dist/handlers/vk
+      CodeUri: ../src/handlers/vk
       Layers:
         - !Ref CommonLayer
         - !Ref PropertiesLayer
@@ -153,12 +153,12 @@ Resources:
   AlexaSkillFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../dist/handlers/alexa
-      Handler: index.handler
+      Handler: src/index.handler
+      Runtime: nodejs12.x
+      CodeUri: ../src/handlers/alexa
       Layers:
         - !Ref CommonLayer
         - !Ref PropertiesLayer
-      Runtime: nodejs12.x
       Role: !GetAtt AlexaSkillIAMRole.Arn
       MemorySize: 128
       Timeout: 60
@@ -169,9 +169,9 @@ Resources:
   YandexMp3UploadFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: index.upload
-      CodeUri: ../dist/handlers/yandex
+      Handler: src/index.upload
       Runtime: nodejs12.x
+      CodeUri: ../src/handlers/yandex
       Layers:
         - !Ref CommonLayer
         - !Ref PropertiesLayer
@@ -202,9 +202,9 @@ Resources:
   YandexMp3PlayFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: index.playSound
-      CodeUri: ../dist/handlers/yandex
+      Handler: src/index.playSound
       Runtime: nodejs12.x
+      CodeUri: ../src/handlers/yandex
       Layers:
         - !Ref CommonLayer
         - !Ref PropertiesLayer
