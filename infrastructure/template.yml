@@ -50,12 +50,18 @@ Resources:
               - SQS:SendMessage
       Queues:
         - !Ref Mp3Sqs
-  CommonModulesLayer:
+  CommonLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
       CompatibleRuntimes:
         - nodejs12.x
-      ContentUri: ../common_layer
+      ContentUri: ../src/layers/common
+  PropertiesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - nodejs12.x
+      ContentUri: ../src/layers/properties
   AlexaSkillIAMRole:
     Type: AWS::IAM::Role
     Properties:
@@ -121,7 +127,8 @@ Resources:
       Runtime: nodejs12.x
       CodeUri: ../dist/handlers/vk
       Layers:
-        - !Ref CommonModulesLayer
+        - !Ref CommonLayer
+        - !Ref PropertiesLayer
       Environment:
         Variables:
           BUCKET: !Ref Mp3Bucket
@@ -149,7 +156,8 @@ Resources:
       CodeUri: ../dist/handlers/alexa
       Handler: index.handler
       Layers:
-        - !Ref CommonModulesLayer
+        - !Ref CommonLayer
+        - !Ref PropertiesLayer
       Runtime: nodejs12.x
       Role: !GetAtt AlexaSkillIAMRole.Arn
       MemorySize: 128
@@ -165,7 +173,8 @@ Resources:
       CodeUri: ../dist/handlers/yandex
       Runtime: nodejs12.x
       Layers:
-        - !Ref CommonModulesLayer
+        - !Ref CommonLayer
+        - !Ref PropertiesLayer
       Policies:
         - DynamoDBWritePolicy:
             TableName:
@@ -197,7 +206,8 @@ Resources:
       CodeUri: ../dist/handlers/yandex
       Runtime: nodejs12.x
       Layers:
-        - !Ref CommonModulesLayer
+        - !Ref CommonLayer
+        - !Ref PropertiesLayer
       Policies:
         - DynamoDBReadPolicy:
             TableName:

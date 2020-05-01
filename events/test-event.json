@@ -1,0 +1,7 @@
+{
+  "Records": [
+    {
+      "body": "{\"Records\":[{\"eventVersion\":\"2.1\",\"eventSource\":\"aws:s3\",\"awsRegion\":\"us-west-1\",\"eventTime\":\"2020-04-30T22:55:44.657Z\",\"eventName\":\"ObjectCreated:Put\",\"userIdentity\":{\"principalId\":\"AWS:AROAV3VPBR6YZGSQWSFRJ:alexa-jumoresques-serverl-RefreshJumoresquesHandle-1L66NPYNSJJPD\"},\"requestParameters\":{\"sourceIPAddress\":\"13.57.219.163\"},\"responseElements\":{\"x-amz-request-id\":\"B2029594025006E0\",\"x-amz-id-2\":\"rgvmsmIbz6WNXH+ikoK1mvc8cjFPDFE9P1a2wfvBOb/+cPrKI2zi8XM+r1YlklxiQBwnbzOcdVwr9UlnqDcm8cFYAYQEaa9M\"},\"s3\":{\"s3SchemaVersion\":\"1.0\",\"configurationId\":\"0d5153d8-3f2e-451f-82b5-cad90602acd9\",\"bucket\":{\"name\":\"alexa-jumoresques-serverless-prod-stack-mp3bucket-1db4j8lk7rejy\",\"ownerIdentity\":{\"principalId\":\"AVD0M5KEKO2OQ\"},\"arn\":\"arn:aws:s3:::alexa-jumoresques-serverless-prod-stack-mp3bucket-1db4j8lk7rejy\"},\"object\":{\"key\":\"jumoresques.mp3\",\"size\":399897,\"eTag\":\"7bcae5a677d97b8bb1980c84540d2f30\",\"sequencer\":\"005EAB5773DA54D69B\"}}}]}"
+    }
+  ]
+}
