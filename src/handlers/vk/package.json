@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A function to find top 5 jumoresques and upload their audio versions to DB",
   "scripts": {
-    "build": "npm run clean && npm run lint && npm run test && tsc",
+    "build": "npm run clean && tsc",
     "lint": "eslint --ext ts -c ./.eslintrc.yml .",
     "test": "jest --no-cache",
     "clean": "rimraf dist"
@@ -29,7 +29,6 @@
     "@typescript-eslint/parser": "^2.27.0"
   },
   "dependencies": {
-    "@types/aws-sdk": "^2.7.0",
     "@types/node": "^13.11.0",
     "aws-sdk": "^2.654.0",
     "common": "file:../../layers/common/nodejs",

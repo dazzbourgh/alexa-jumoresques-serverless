@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "An Alexa skill to play jumoresques",
   "scripts": {
-    "build": "npm run clean && npm run lint && tsc",
+    "build": "npm run clean && tsc",
     "lint": "eslint --ext ts -c ./.eslintrc.yml .",
     "test": "jest --no-cache",
     "clean": "rimraf dist"

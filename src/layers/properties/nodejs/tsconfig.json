@@ -1,8 +1,10 @@
 {
   "include": [
     "./src/*.ts",
-    "./test/*.ts",
     "./src/*.d.ts"
+  ],
+  "exclude": [
+    "./src/*.test.ts"
   ],
   "extends": "../../../../config/tsconfig.json",
   "compilerOptions": {
