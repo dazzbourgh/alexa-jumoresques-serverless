@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Fetches jumoresques and reads them out loud in funny voice
+Parameters:
+  Env:
+    Type: String
+  ListensQueueArn:
+    Type: String
+Resources:
+  ListensDynamoTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: date
+          AttributeType: N
+      KeySchema:
+        - AttributeName: date
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+  ListensHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: listens-handler.handler
+      Runtime: python3.8
+      CodeUri: ../src/python-handlers/listens
+      Environment:
+        Variables:
+          ENVIRONMENT: !Ref Env
+          TABLE_NAME: !GetAtt ListensDynamoTable.Arn
+          FUNCTION_NAME: listens
+      Policies:
+        - SQSPollerPolicy:
+            QueueName: !Ref ListensQueueArn
+        - DynamoDBWritePolicy:
+            TableName: !GetAtt ListensDynamoTable.Arn
+      Events:
+        ListenEvent:
+          Type: SQS
+          Properties:
+            Queue: !Ref ListensQueueArn
