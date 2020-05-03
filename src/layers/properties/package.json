@@ -1,12 +1,12 @@
 {
-  "name": "common",
-  "main": "src/index.ts",
+  "name": "properties",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "dependencies": {
-    "@types/aws-sdk": "^2.7.0",
     "@types/node": "^13.11.0",
-    "ask-sdk": "^2.8.0",
+    "@types/lodash": "^4.14.150",
     "aws-sdk": "^2.654.0",
-    "axios": "^0.19.2"
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
     "@types/jest": "^25.2.1",
@@ -22,11 +22,10 @@
     "rimraf": "^3.0.2",
     "ts-jest": "^25.3.1",
     "ts-loader": "^7.0.0",
-    "tsc": "^1.20150623.0",
     "typescript": "^3.8.3"
   },
   "scripts": {
-    "build": "npm run clean && tsc",
+    "build": "npm run clean && tsc --declaration",
     "lint": "eslint --ext ts -c ./.eslintrc.yml .",
     "test": "jest --no-cache",
     "clean": "rimraf dist"

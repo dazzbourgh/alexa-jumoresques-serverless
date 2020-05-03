@@ -2,6 +2,7 @@
   "name": "vk-jumoresques-refresher",
   "version": "1.0.0",
   "description": "A function to find top 5 jumoresques and upload their audio versions to DB",
+  "main": "./src/index.ts",
   "scripts": {
     "build": "npm run clean && tsc",
     "lint": "eslint --ext ts -c ./.eslintrc.yml .",
@@ -18,7 +19,6 @@
     "rimraf": "^3.0.2",
     "ts-jest": "^25.3.1",
     "ts-loader": "^7.0.0",
-    "tsc": "^1.20150623.0",
     "typescript": "^3.8.3",
     "eslint-config-standard-with-typescript": "^15.0.1",
     "eslint-plugin-import": "^2.20.2",
@@ -26,13 +26,14 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "@typescript-eslint/eslint-plugin": "^2.27.0",
-    "@typescript-eslint/parser": "^2.27.0"
+    "@typescript-eslint/parser": "^2.27.0",
+    "ask-sdk": "^2.8.0",
+    "aws-sdk": "^2.654.0"
   },
   "dependencies": {
     "@types/node": "^13.11.0",
-    "aws-sdk": "^2.654.0",
-    "common": "file:../../layers/common/nodejs",
-    "properties": "file:../../layers/properties/nodejs",
-    "axios": "^0.19.2"
+    "axios": "^0.19.2",
+    "common": "file:../../layers/common/",
+    "properties": "file:../../layers/properties/"
   }
 }

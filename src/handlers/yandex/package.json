@@ -4,11 +4,11 @@
   "dependencies": {
     "@types/aws-sdk": "^2.7.0",
     "@types/node": "^13.11.0",
-    "aws-sdk": "^2.654.0",
-    "properties": "file:../../layers/properties/nodejs",
-    "common": "file:../../layers/common/nodejs"
+    "properties": "file:../../layers/properties",
+    "common": "file:../../layers/common"
   },
   "devDependencies": {
+    "aws-sdk": "^2.654.0",
     "@types/jest": "^25.2.1",
     "@typescript-eslint/eslint-plugin": "^2.27.0",
     "@typescript-eslint/parser": "^2.27.0",
@@ -22,7 +22,6 @@
     "rimraf": "^3.0.2",
     "ts-jest": "^25.3.1",
     "ts-loader": "^7.0.0",
-    "tsc": "^1.20150623.0",
     "typescript": "^3.8.3"
   },
   "scripts": {

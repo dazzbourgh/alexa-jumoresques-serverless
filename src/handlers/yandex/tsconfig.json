@@ -9,6 +9,7 @@
   "extends": "../../../config/tsconfig.json",
   "compilerOptions": {
     "sourceRoot": "./src",
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "outDir": "dist"
   }
 }

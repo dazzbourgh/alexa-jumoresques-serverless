@@ -26,13 +26,13 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "@typescript-eslint/eslint-plugin": "^2.27.0",
-    "@typescript-eslint/parser": "^2.27.0"
+    "@typescript-eslint/parser": "^2.27.0",
+    "aws-sdk": "^2.654.0",
+    "ask-sdk": "^2.8.0"
   },
   "dependencies": {
     "@types/aws-sdk": "^2.7.0",
     "@types/node": "^13.11.0",
-    "aws-sdk": "^2.654.0",
-    "ask-sdk": "^2.8.0",
-    "properties": "file:../../layers/properties/nodejs"
+    "properties": "file:../../layers/properties"
   }
 }

@@ -6,10 +6,11 @@
   "exclude": [
     "./src/*.test.ts"
   ],
-  "extends": "../../../../config/tsconfig.json",
+  "extends": "../../../config/tsconfig.json",
   "compilerOptions": {
     "sourceRoot": "./src",
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "outDir": "dist"
   },
   "typeRoots": [
     "node_modules/@types"

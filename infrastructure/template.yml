@@ -50,18 +50,6 @@ Resources:
               - SQS:SendMessage
       Queues:
         - !Ref Mp3Sqs
-  CommonLayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      CompatibleRuntimes:
-        - nodejs12.x
-      ContentUri: ../src/layers/common
-  PropertiesLayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      CompatibleRuntimes:
-        - nodejs12.x
-      ContentUri: ../src/layers/properties
   AlexaSkillIAMRole:
     Type: AWS::IAM::Role
     Properties:
@@ -120,15 +108,32 @@ Resources:
       Roles:
         - !Ref RefreshJumoresquesHandlerRole
       PolicyName: PollyReadOnlyAccessPolicy
+  RefreshJumoresquesHandlerDependencies:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - nodejs12.x
+      ContentUri: ../src/handlers/vk/dependencies
+  YandexDependencies:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - nodejs12.x
+      ContentUri: ../src/handlers/yandex/dependencies
+  AlexaSkillFunctionDependencies:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - nodejs12.x
+      ContentUri: ../src/handlers/alexa/dependencies
   RefreshJumoresquesHandler:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/index.handler
+      Handler: index.handler
       Runtime: nodejs12.x
-      CodeUri: ../src/handlers/vk
+      CodeUri: ../src/handlers/vk/dist
       Layers:
-        - !Ref CommonLayer
-        - !Ref PropertiesLayer
+        - !Ref RefreshJumoresquesHandlerDependencies
       Environment:
         Variables:
           BUCKET: !Ref Mp3Bucket
@@ -153,12 +158,11 @@ Resources:
   AlexaSkillFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/index.handler
+      Handler: index.handler
       Runtime: nodejs12.x
-      CodeUri: ../src/handlers/alexa
+      CodeUri: ../src/handlers/alexa/dist
       Layers:
-        - !Ref CommonLayer
-        - !Ref PropertiesLayer
+        - !Ref AlexaSkillFunctionDependencies
       Role: !GetAtt AlexaSkillIAMRole.Arn
       MemorySize: 128
       Timeout: 60
@@ -169,12 +173,11 @@ Resources:
   YandexMp3UploadFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/index.upload
+      Handler: index.upload
       Runtime: nodejs12.x
-      CodeUri: ../src/handlers/yandex
+      CodeUri: ../src/handlers/yandex/dist
       Layers:
-        - !Ref CommonLayer
-        - !Ref PropertiesLayer
+        - !Ref YandexDependencies
       Policies:
         - DynamoDBWritePolicy:
             TableName:
@@ -202,12 +205,11 @@ Resources:
   YandexMp3PlayFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/index.playSound
+      Handler: index.playSound
       Runtime: nodejs12.x
-      CodeUri: ../src/handlers/yandex
+      CodeUri: ../src/handlers/yandex/dist
       Layers:
-        - !Ref CommonLayer
-        - !Ref PropertiesLayer
+        - !Ref YandexDependencies
       Policies:
         - DynamoDBReadPolicy:
             TableName:
