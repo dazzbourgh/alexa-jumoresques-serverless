@@ -3,7 +3,7 @@ import * as fs from 'fs'
 import { AxiosStatic } from 'axios'
 import { YandexUploadFileResponse } from '../..'
 
-export function uploadFileToYandexDialogs (axios: AxiosStatic): (properties: any) => (filename: string, audio: Body) => Promise<YandexUploadFileResponse> {
+export function createYandexUploader (axios: AxiosStatic): (properties: any) => (filename: string, audio: Body) => Promise<YandexUploadFileResponse> {
   return (properties: any) => async (filename: string, audio: Body): Promise<YandexUploadFileResponse> => {
     await new Promise((resolve, reject) => {
       fs.writeFile(`/tmp/${filename}`, audio, (err) => {

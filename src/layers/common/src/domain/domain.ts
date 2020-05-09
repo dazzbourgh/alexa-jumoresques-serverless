@@ -21,20 +21,22 @@ export interface Jumoresque {
   likes: number
 }
 
+export interface S3Details {
+  bucket: {
+    name: string
+    arn: string
+  }
+  object: {
+    key: string
+    size: number
+    eTag: string
+  }
+}
+
 export interface S3Notification {
   Records: [
     {
-      s3: {
-        bucket: {
-          name: string
-          arn: string
-        }
-        object: {
-          key: string
-          size: number
-          eTag: string
-        }
-      }
+      s3: S3Details
     }
   ]
 }
