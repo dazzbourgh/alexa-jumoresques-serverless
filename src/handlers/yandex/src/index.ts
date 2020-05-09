@@ -12,13 +12,13 @@ export const upload = async (event: any): Promise<void> => {
   const body: S3Notification = JSON.parse(event.Records[0].body)
   const s3 = body.Records[0].s3
   const mp3File = getAudioFile(s3)
-  const uploadResponse = await uploadFileToYandexDialogs(awaitedProps)(s3.object.key, mp3File)
-  await cacheValue(awaitedProps)(uploadResponse.sound.id)
+  const uploadResponse = await uploadFileToYandexDialogs(awaitedProps.yandex)(s3.object.key, mp3File)
+  await cacheValue(awaitedProps.aws.dynamo)(uploadResponse.sound.id)
 }
 
 export const playSound = async (request: YandexSkillRequest): Promise<YandexSkillResponse> => {
   const awaitedProps = await properties
-  const mp3Id = await getCachedValue(awaitedProps)()
+  const mp3Id = await getCachedValue(awaitedProps.aws.dynamo)()
   return {
     response: {
       end_session: true,
