@@ -1,10 +1,10 @@
 import { Body } from 'aws-sdk/clients/s3'
 import * as fs from 'fs'
-import axios from 'axios'
+import { AxiosStatic } from 'axios'
 import { YandexUploadFileResponse } from '../..'
 
-export function uploadFileToYandexDialogs (properties: any): (filename: string, audio: Body) => Promise<YandexUploadFileResponse> {
-  return async (filename: string, audio: Body): Promise<YandexUploadFileResponse> => {
+export function uploadFileToYandexDialogs (axios: AxiosStatic): (properties: any) => (filename: string, audio: Body) => Promise<YandexUploadFileResponse> {
+  return (properties: any) => async (filename: string, audio: Body): Promise<YandexUploadFileResponse> => {
     await new Promise((resolve, reject) => {
       fs.writeFile(`/tmp/${filename}`, audio, (err) => {
         if (err !== null) {
