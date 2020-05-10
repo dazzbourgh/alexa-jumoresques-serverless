@@ -1,11 +1,11 @@
 import {
-  S3Notification,
-  uploadFileToYandexDialogs,
-  YandexSkillRequest,
-  YandexSkillResponse
+  S3Notification
 } from 'common'
+import {
+  YandexSkillResponse
+} from './model'
 import properties from 'properties'
-import { cacheValue, getAudioFile, getCachedValue } from './utils'
+import { cacheValue, getAudioFile, getCachedValue, uploadFileToYandexDialogs } from './utils'
 
 export const upload = async (event: any): Promise<void> => {
   const awaitedProps = await properties
@@ -16,7 +16,7 @@ export const upload = async (event: any): Promise<void> => {
   await cacheValue(awaitedProps.aws.dynamo)(uploadResponse.sound.id)
 }
 
-export const playSound = async (request: YandexSkillRequest): Promise<YandexSkillResponse> => {
+export const playSound = async (): Promise<YandexSkillResponse> => {
   const awaitedProps = await properties
   const mp3Id = await getCachedValue(awaitedProps.aws.dynamo)()
   return {

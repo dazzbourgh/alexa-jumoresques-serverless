@@ -4,8 +4,10 @@
   "dependencies": {
     "@types/aws-sdk": "^2.7.0",
     "@types/node": "^13.11.0",
+    "@types/request": "^2.48.4",
     "common": "file:../../layers/common",
-    "properties": "file:../../layers/properties"
+    "properties": "file:../../layers/properties",
+    "request": "^2.88.2"
   },
   "devDependencies": {
     "@types/jest": "^25.2.1",
