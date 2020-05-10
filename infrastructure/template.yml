@@ -209,6 +209,8 @@ Resources:
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref Mp3IdDynamoTable
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: arn:aws:secretsmanager:us-west-1:403020287921:secret:yandex-TYwPDV
       Environment:
         Variables:
           TABLE: !Ref Mp3IdDynamoTable
