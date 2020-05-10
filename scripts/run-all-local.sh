@@ -4,3 +4,5 @@
 ./build-modules.sh
 ./prepare-production-dependencies.sh
 ./package.sh
+./deploy.sh
+./remove-production-dependencies.sh
