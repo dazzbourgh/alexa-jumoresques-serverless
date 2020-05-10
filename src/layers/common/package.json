@@ -4,9 +4,11 @@
   "types": "dist/index.d.ts",
   "dependencies": {
     "@types/node": "^13.11.0",
+    "@types/request": "^2.48.4",
     "axios": "^0.19.2",
     "ask-sdk": "^2.8.0",
-    "aws-sdk": "^2.654.0"
+    "aws-sdk": "^2.654.0",
+    "request": "^2.88.2"
   },
   "devDependencies": {
     "@types/jest": "^25.2.1",
@@ -26,7 +28,7 @@
   },
   "scripts": {
     "build": "npm run clean && tsc --declaration",
-    "lint": "eslint --ext ts -c .eslintrc.yml .",
+    "lint": "eslint --ext ts ./src",
     "test": "jest --no-cache",
     "clean": "rimraf dist"
   }

@@ -1,5 +1,5 @@
 import { byLikesDescending, concatAudioBuffers, noAttachments, shorterThan1500Characters, toText } from './generic-utils'
-import { Item } from '../../domain/domain'
+import { Item } from '../../domain'
 
 describe('util functions', () => {
   test('should filter posts by attachments', () => {

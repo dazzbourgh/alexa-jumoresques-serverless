@@ -1,4 +1,4 @@
 import { createYandexUploader } from './yandex'
-import axios from 'axios'
+import request from 'request'
 
-export default createYandexUploader(axios)
+export default createYandexUploader(request)

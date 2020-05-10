@@ -1,6 +1,5 @@
-import { getObject, getValueFromDynamo, putValueToDynamo } from 'common'
+import { getObject, getValueFromDynamo, putValueToDynamo, S3Details } from 'common'
 import AWS from 'aws-sdk'
-import { S3Details } from 'common/dist/domain/domain'
 
 interface AWSCacheParams {
   tableName: string
@@ -24,11 +23,11 @@ export function getCachedValue ({ tableName, mp3Id }: AWSCacheParams): () => Pro
   }
 }
 
-export async function getAudioFile (s3: S3Details): Promise<AWS.S3.Body | undefined> {
+export async function getAudioFile (s3: S3Details): Promise<AWS.S3.Body> {
   const s3Client = new AWS.S3()
   const response = await getObject(s3Client)({
     Bucket: s3.bucket.name,
     Key: s3.object.key
   })
-  return response.Body
+  return response.Body as AWS.S3.Body
 }

@@ -6,9 +6,8 @@ phases:
   build:
     commands:
       - cd scripts
-      - ./clean.sh
-      - ./build-modules.sh
-      - ./prepare-production-dependencies.sh
+      - chmod +x ./run-all.sh
+      - ./run-all.sh
       - cd ..
       - aws cloudformation package --template-file infrastructure/template.yml --s3-bucket jumoresques-lambda-bucket --output-template-file packaged-template.yml
 artifacts:
