@@ -1,9 +1,5 @@
-import {
-  S3Notification
-} from 'common'
-import {
-  YandexSkillResponse
-} from './model'
+import { ApiGatewayResponse, S3Notification } from 'common'
+import { YandexSkillResponse } from './model'
 import properties from 'properties'
 import { cacheValue, getAudioFile, getCachedValue, uploadFileToYandexDialogs } from './utils'
 
@@ -16,15 +12,21 @@ export const upload = async (event: any): Promise<void> => {
   await cacheValue(awaitedProps.aws)(uploadResponse.sound.id)
 }
 
-export const playSound = async (): Promise<YandexSkillResponse> => {
+export const playSound = async (): Promise<ApiGatewayResponse> => {
   const awaitedProps = await properties
   const mp3Id = await getCachedValue(awaitedProps.aws)()
-  return {
+  const body: YandexSkillResponse = {
     response: {
       end_session: true,
       text: 'А вот и свежие юморески',
       tts: `<speaker audio="dialogs-upload/${awaitedProps.yandex.id}/${mp3Id}.opus">`
     },
     version: '1.0'
+  }
+  return {
+    isBase64Encoded: false,
+    headers: { 'Access-Control-Allow-Origin': '*' },
+    statusCode: 200,
+    body: JSON.stringify(body)
   }
 }

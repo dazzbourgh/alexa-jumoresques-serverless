@@ -45,3 +45,10 @@ export interface DynamoItem {
   key: string
   value: string
 }
+
+export interface ApiGatewayResponse {
+  isBase64Encoded: boolean
+  statusCode: number
+  headers: { [key: string]: string}
+  body: string
+}
