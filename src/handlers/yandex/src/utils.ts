@@ -69,7 +69,7 @@ function upload (request: RequestAPI): (filename: string, url: string, token: st
       if (err) {
         throw err
       }
-      resolve(body)
+      resolve(JSON.parse(body))
     }))
   }
 }
