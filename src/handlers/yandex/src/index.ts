@@ -23,7 +23,7 @@ export const playSound = async (): Promise<YandexSkillResponse> => {
     response: {
       end_session: true,
       text: 'А вот и свежие юморески',
-      tts: `<speaker audio="dialogs-upload/${mp3Id}/${awaitedProps.s3.key}.opus">`
+      tts: `<speaker audio="dialogs-upload/${awaitedProps.yandex.id}/${mp3Id}.opus">`
     },
     version: '1.0'
   }
