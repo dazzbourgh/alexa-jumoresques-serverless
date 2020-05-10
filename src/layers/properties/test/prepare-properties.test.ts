@@ -18,6 +18,7 @@ describe('properties preparing function', () => {
       .resolves.toEqual(expectedProps)
   })
 
+  // todo: revive test
   // test('should fail if neither env variable nor default value provided', async () => {
   //   await expect(prepare(invalidProps)).rejects.toEqual(new Error('Environment variable or default value expected for field: missingEnvVar'))
   // })
