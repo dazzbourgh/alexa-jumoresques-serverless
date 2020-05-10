@@ -1,7 +1,7 @@
 import { getObject, getValueFromDynamo, putValueToDynamo, S3Details } from 'common'
 import AWS from 'aws-sdk'
 import { YandexUploadFileResponse } from './model'
-import fs from 'fs'
+import oldFs, { promises as fs } from 'fs'
 import request from 'request'
 
 interface AWSCacheParams {
@@ -47,26 +47,16 @@ type RequestAPI = request.RequestAPI<request.Request, request.CoreOptions, reque
 function createYandexUploader (request: RequestAPI): (properties: YandexParams) => YandexUploader {
   return ({ url, token }) => async (filename: string, audio: AWS.S3.Body): Promise<YandexUploadFileResponse> => {
     const path = `/tmp/${filename}`
-    await writeFileToDisk(path, audio)
+    await fs.writeFile(path, audio)
     return await upload(request)(path, url, token)
   }
 }
 
 export const uploadFileToYandexDialogs = createYandexUploader(request)
 
-async function writeFileToDisk (path: string, audio: AWS.S3.Body): Promise<void> {
-  await new Promise((resolve, reject) => {
-    fs.writeFile(path, audio, (err) => {
-      if (err !== null) {
-        reject(err)
-      }
-    })
-  })
-}
-
 function upload (request: RequestAPI): (filename: string, url: string, token: string) => Promise<YandexUploadFileResponse> {
   return async (filename: string, url: string, token: string): Promise<YandexUploadFileResponse> => {
-    const formData = { file: fs.createReadStream(filename) }
+    const formData = { file: oldFs.createReadStream(filename) }
     return await new Promise(resolve => request.post({
       headers: {
         Accept: 'text/plain',
