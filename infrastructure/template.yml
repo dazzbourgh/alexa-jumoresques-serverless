@@ -24,8 +24,6 @@ Resources:
       KeySchema:
         - AttributeName: key
           KeyType: HASH
-        - AttributeName: value
-          KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
   Mp3Sqs:
     Type: AWS::SQS::Queue
