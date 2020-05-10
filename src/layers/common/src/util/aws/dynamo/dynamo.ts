@@ -5,10 +5,12 @@ import { DynamoItem } from '../../..'
 export function putValueToDynamo (dynamoClient: AWS.DynamoDB, tableName: string): (item: DynamoItem) => Promise<void> {
   return async (item: DynamoItem): Promise<void> => {
     const dynamoRequest: PutItemInput = {
-      Item: {},
+      Item: {
+        key: { S: item.key },
+        value: { S: item.value }
+      },
       TableName: tableName
     }
-    dynamoRequest.Item[item.key] = { S: item.value }
     await dynamoClient.putItem(dynamoRequest).promise()
   }
 }

@@ -26,7 +26,8 @@ describe('DynamoDB util functions', () => {
     await putValueToDynamo(mockClient, tableName)(item)
     // @ts-ignore
     const argument = mockClient.putItem.mock.calls[0][0]
-    expect(argument.Item[key].S).toBe(item.value)
+    expect(argument.Item.key.S).toBe(item.key)
+    expect(argument.Item.value.S).toBe(item.value)
     expect(argument.TableName).toBe(tableName)
   })
   test('should get from dynamo', async () => {
