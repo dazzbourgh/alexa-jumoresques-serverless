@@ -1,15 +1,24 @@
 import { ApiGatewayResponse, S3Notification } from 'common'
 import { YandexSkillResponse } from './model'
 import properties from 'properties'
-import { cacheValue, getAudioFile, getCachedValue, uploadFileToYandexDialogs } from './utils'
+import { getAudioFile, getCachedValue, uploadFileToYandexDialogs } from './utils'
+import AWS from 'aws-sdk'
+import { dynamoCache, putToCache } from './db'
 
 export const upload = async (event: any): Promise<void> => {
   const awaitedProps = await properties
+  const dynamoClient = new AWS.DynamoDB({ region: awaitedProps.aws.region })
   const body: S3Notification = JSON.parse(event.Records[0].body)
   const s3 = body.Records[0].s3
   const mp3File = await getAudioFile(s3)
   const uploadResponse = await uploadFileToYandexDialogs(awaitedProps.yandex)(s3.object.key, mp3File)
-  await cacheValue(awaitedProps.aws)(uploadResponse.sound.id)
+  await putToCache({
+    tableName: awaitedProps.aws.dynamo.tableName,
+    item: {
+      key: awaitedProps.aws.dynamo.mp3Id,
+      value: uploadResponse.sound.id
+    }
+  })(dynamoCache(dynamoClient))
 }
 
 export const playSound = async (): Promise<ApiGatewayResponse> => {

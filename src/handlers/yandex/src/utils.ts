@@ -1,4 +1,4 @@
-import { getObject, getValueFromDynamo, putValueToDynamo, S3Details } from 'common'
+import { getObject, getValueFromDynamo, S3Details } from 'common'
 import AWS from 'aws-sdk'
 import { YandexUploadFileResponse } from './model'
 import oldFs, { promises as fs } from 'fs'
@@ -6,16 +6,6 @@ import request from 'request'
 
 interface DynamoParams { tableName: string, mp3Id: string }
 interface CacheValueCallParams { region: string, dynamo: DynamoParams }
-
-export function cacheValue ({ region, dynamo: { tableName, mp3Id } }: CacheValueCallParams): (value: string) => Promise<void> {
-  return async (value: string) => {
-    const dynamoClient = new AWS.DynamoDB({ region: region })
-    await putValueToDynamo(dynamoClient, tableName)({
-      key: mp3Id,
-      value: value
-    })
-  }
-}
 
 export function getCachedValue ({ region, dynamo: { tableName, mp3Id } }: CacheValueCallParams): () => Promise<string | undefined> {
   return async () => {
