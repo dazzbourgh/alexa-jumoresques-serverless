@@ -7,6 +7,7 @@ import { putValueToDynamo, getValueFromDynamo } from './util/aws/dynamo/dynamo'
 export * from './util/vk'
 
 export * from './domain'
+export * from './util/cache'
 
 export {
   putObject,

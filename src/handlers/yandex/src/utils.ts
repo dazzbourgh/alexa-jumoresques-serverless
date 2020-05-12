@@ -1,17 +1,14 @@
-import { getObject, getValueFromDynamo, S3Details } from 'common'
+import { getObject, S3Details } from 'common'
 import AWS from 'aws-sdk'
-import { YandexUploadFileResponse } from './model'
+import { YandexSkillResponse, YandexUploadFileResponse } from './model'
 import oldFs, { promises as fs } from 'fs'
 import request from 'request'
 
-interface DynamoParams { tableName: string, mp3Id: string }
-interface CacheValueCallParams { region: string, dynamo: DynamoParams }
-
-export function getCachedValue ({ region, dynamo: { tableName, mp3Id } }: CacheValueCallParams): () => Promise<string | undefined> {
-  return async () => {
-    const dynamoClient = new AWS.DynamoDB({ region: region })
-    return await getValueFromDynamo(dynamoClient, tableName)(mp3Id)
-  }
+interface AWSLambdaProxyResponse {
+  isBase64Encoded: boolean
+  headers: { [key: string]: string }
+  statusCode: number
+  body: string
 }
 
 export async function getAudioFile (s3: S3Details): Promise<AWS.S3.Body> {
@@ -61,3 +58,18 @@ function upload (request: RequestAPI): (filename: string, url: string, token: st
     }))
   }
 }
+
+export const toYandexResponse = (props: any) => async (mp3Id: Promise<string | undefined>): Promise<YandexSkillResponse> => ({
+  response: {
+    end_session: true,
+    text: 'А вот и свежие юморески',
+    tts: `<speaker audio="dialogs-upload/${props.yandex.id}/${await mp3Id}.opus">`
+  },
+  version: '1.0'
+})
+export const toLambdaProxyResponse = async (yandexResponse: Promise<YandexSkillResponse>): Promise<AWSLambdaProxyResponse> => ({
+  isBase64Encoded: false,
+  headers: { 'Access-Control-Allow-Origin': '*' },
+  statusCode: 200,
+  body: JSON.stringify(yandexResponse)
+})
