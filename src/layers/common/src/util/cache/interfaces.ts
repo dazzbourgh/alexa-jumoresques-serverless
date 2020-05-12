@@ -1,6 +1,5 @@
 import { Reader } from 'monet'
-
-export type Props = any
+import { Props } from '../../domain'
 
 export interface CacheConfig {
   mapper: (value?: string) => CacheRequest

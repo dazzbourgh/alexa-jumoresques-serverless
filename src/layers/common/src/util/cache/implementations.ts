@@ -2,7 +2,7 @@ import { CacheFactory, CacheService } from './interfaces'
 import { Reader } from 'monet'
 import * as AWS from 'aws-sdk'
 
-interface AWSRegionProps { region: string }
+export interface AWSRegionProps { region: string }
 
 const dynamoCache: (awsRegionProps: AWSRegionProps) => CacheService = (awsRegionProps) => ({
   put: async ({ tableName, item }) => {

@@ -1,6 +1,5 @@
-import { getObject, S3Details } from 'common'
+import { CacheRequest, YandexSkillResponse, YandexUploadFileResponse } from 'common'
 import AWS from 'aws-sdk'
-import { YandexSkillResponse, YandexUploadFileResponse } from './model'
 import oldFs, { promises as fs } from 'fs'
 import request from 'request'
 
@@ -9,15 +8,6 @@ interface AWSLambdaProxyResponse {
   headers: { [key: string]: string }
   statusCode: number
   body: string
-}
-
-export async function getAudioFile (s3: S3Details): Promise<AWS.S3.Body> {
-  const s3Client = new AWS.S3()
-  const response = await getObject(s3Client)({
-    Bucket: s3.bucket.name,
-    Key: s3.object.key
-  })
-  return response.Body as AWS.S3.Body
 }
 
 export interface YandexParams {
@@ -36,8 +26,6 @@ function createYandexUploader (request: RequestAPI): (properties: YandexParams) 
     return await upload(request)(path, url, token)
   }
 }
-
-export const uploadFileToYandexDialogs = createYandexUploader(request)
 
 function upload (request: RequestAPI): (filename: string, url: string, token: string) => Promise<YandexUploadFileResponse> {
   return async (filename: string, url: string, token: string): Promise<YandexUploadFileResponse> => {
@@ -73,3 +61,20 @@ export const toLambdaProxyResponse = async (yandexResponse: Promise<YandexSkillR
   statusCode: 200,
   body: JSON.stringify(yandexResponse)
 })
+
+interface DynamoProps {
+  tableName: string
+  mp3Id: string
+}
+
+export const toItem = ({ tableName, mp3Id }: DynamoProps) => (value?: string): CacheRequest => {
+  const item: { [key: string]: string } = {
+    key: mp3Id
+  }
+  const cacheRequest = {
+    tableName: tableName,
+    item: item
+  }
+  if (value !== undefined) cacheRequest.item.value = value
+  return cacheRequest
+}
