@@ -1,4 +1,4 @@
-import { AudioFileDetails, Props, YandexUploadFileResponse } from '../../domain'
+import { AudioFileDetails, Props, YandexUploadFileResponse } from 'common'
 import { Readable } from 'stream'
 import { Reader } from 'monet'
 

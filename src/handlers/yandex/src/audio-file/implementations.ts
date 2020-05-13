@@ -1,9 +1,10 @@
-import { AudioFileDetails, LambdaEvent } from '../../domain'
-import { AudioDownloadFunction, AudioDownloadFunctionFactory, BinaryFile } from './interfaces'
+import { AudioFileDetails, LambdaEvent, AWSRegionProps } from 'common'
+import { AudioDownloadFunction, AudioDownloadFunctionFactory, AudioUploadFunction, BinaryFile } from './interfaces'
 import { Reader } from 'monet'
-import { AWSRegionProps } from '../cache'
 import AWS from 'aws-sdk'
 import { GetObjectOutput } from 'aws-sdk/clients/s3'
+import { uploadLocalFileToYandexDialogs, writeToDisk } from '../utils'
+import { YandexParams } from '../interfaces'
 
 export const mapAWSLambdaEvent = (evt: LambdaEvent): AudioFileDetails => JSON.parse(evt.Records[0].body).Records[0].s3
 
@@ -25,3 +26,9 @@ export const audioDownloadFunctionFactory: AudioDownloadFunctionFactory = {
     }
   })
 }
+
+export const audioUploadFunction: (request: any, { url, token }: YandexParams) => AudioUploadFunction =
+    ({ request, url, token }) => async mp3File => {
+      const path = await writeToDisk(mp3File)
+      return await uploadLocalFileToYandexDialogs({ url, token }, request)(path)
+    }

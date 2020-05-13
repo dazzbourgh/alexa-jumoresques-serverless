@@ -7,7 +7,6 @@ export * from './util/vk'
 
 export * from './domain'
 export * from './util/cache'
-export * from './util/audio-file'
 
 export {
   putObject,
