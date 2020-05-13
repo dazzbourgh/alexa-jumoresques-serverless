@@ -1,6 +1,7 @@
 {
   "include": [
     "./src/*.ts",
+    "./src/**/*.ts",
     "./src/*.d.ts"
   ],
   "exclude": [
@@ -11,5 +12,5 @@
     "sourceRoot": "./",
     "baseUrl": "./",
     "outDir": "dist"
-  },
+  }
 }
