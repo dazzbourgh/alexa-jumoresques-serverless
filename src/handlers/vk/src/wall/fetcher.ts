@@ -1,5 +1,5 @@
 import { AxiosStatic } from 'axios'
-import { VkResponse } from 'common'
+import { VkResponse } from '../domain'
 
 export function fetcher (axios: AxiosStatic): (properties: any) => Promise<VkResponse> {
   return async (properties: any) => {

@@ -1,16 +1,17 @@
 import AWS from 'aws-sdk'
 import {
-  byLikesDescending,
-  noAttachments,
   PartialSynthesizeSpeechInput,
-  shorterThan1500Characters,
-  textToSpeech,
-  toText,
-  concatAudioBuffers,
-  Props
+  Props, textToSpeech
 } from 'common'
 import { PutToStorageFunctionFactory } from './storage'
 import { VkResponse } from './domain'
+import {
+  byLikesDescending,
+  concatAudioBuffers,
+  noAttachments,
+  shorterThan1500Characters,
+  toText
+} from './utils/generic-utils'
 
 type JumoresquePipeline = (vkResponse: VkResponse) => void
 
