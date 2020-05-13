@@ -5,6 +5,7 @@ import AWS from 'aws-sdk'
 import { GetObjectOutput } from 'aws-sdk/clients/s3'
 import { uploadLocalFileToYandexDialogs, writeToDisk } from '../utils'
 import { YandexParams } from '../interfaces'
+import syncFs, { promises as fs } from 'fs'
 
 export const mapAWSLambdaEvent = (evt: LambdaEvent): AudioFileDetails => JSON.parse(evt.Records[0].body).Records[0].s3
 
@@ -29,6 +30,6 @@ export const audioDownloadFunctionFactory: AudioDownloadFunctionFactory = {
 
 export const audioUploadFunction: (request: any, { url, token }: YandexParams) => AudioUploadFunction =
     ({ request, url, token }) => async mp3File => {
-      const path = await writeToDisk(mp3File)
-      return await uploadLocalFileToYandexDialogs({ url, token }, request)(path)
+      const path = await writeToDisk(fs)(mp3File)
+      return await uploadLocalFileToYandexDialogs({ url, token }, request, syncFs)(path)
     }

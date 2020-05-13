@@ -18,7 +18,8 @@ import {
 import request from 'request'
 import {
   audioDownloadFunctionFactory,
-  audioFileDetails, AudioFileOperationsConfig,
+  audioFileDetails,
+  AudioFileOperationsConfig,
   audioUploadFunction,
   downloadAudioFile,
   mapAWSLambdaEvent,
@@ -52,11 +53,11 @@ const createAwsAudioConfig =
     (awaitedProps: Props): AudioFileOperationsConfig<LambdaEvent> =>
       ({
         map: mapAWSLambdaEvent,
-        download: audioDownloadFunctionFactory.createFunction('aws').run(awaitedProps.aws),
+        download: audioDownloadFunctionFactory.createFunction(awaitedProps.provider).run(awaitedProps.aws),
         upload: audioUploadFunction(request, awaitedProps.yandex)
       })
 
 const createCacheConfig = (props: Props): CacheConfig => ({
   mapper: toItem(props.aws.dynamo),
-  service: cacheFactory.createCache('aws').run(props.aws)
+  service: cacheFactory.createCache(props.provider).run(props.aws)
 })
