@@ -1,5 +1,5 @@
-import { Item } from '../../domain/domain'
 import { AudioStream } from 'aws-sdk/clients/polly'
+import { Item } from '../domain'
 
 export const noAttachments = (item: Item): boolean => item.attachments === undefined
 

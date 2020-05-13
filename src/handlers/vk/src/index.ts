@@ -1,7 +1,9 @@
 import AWS from 'aws-sdk'
 import properties from 'properties'
-import { refreshJumoresques } from './vk'
-import { fetchVkWall, VkResponse } from 'common'
+import { Dependencies, refreshJumoresques } from './vk'
+import { putToStorageFunctionFactory } from './storage'
+import { fetchVkWall } from './wall'
+import { VkResponse } from './domain'
 
 export const handler = async (): Promise<void> => {
   const awaitedProps = await properties
@@ -12,7 +14,12 @@ export const handler = async (): Promise<void> => {
     OutputFormat: awaitedProps.aws.polly.outputFormat,
     VoiceId: awaitedProps.aws.polly.voice
   }
-  const s3Client = new AWS.S3()
+  const dependencies: Dependencies = {
+    pollyClient,
+    putToStorageFunctionFactory,
+    synthesizeGeneralParams,
+    awaitedProps
+  }
   const vkResponse: VkResponse = await fetchVkWall(awaitedProps)
-  await refreshJumoresques(pollyClient, synthesizeGeneralParams, s3Client, awaitedProps)(vkResponse)
+  await refreshJumoresques(dependencies)(vkResponse)
 }

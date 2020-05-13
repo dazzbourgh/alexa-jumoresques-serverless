@@ -1,32 +1,64 @@
-import { ApiGatewayResponse, S3Notification } from 'common'
-import { YandexSkillResponse } from './model'
+import {
+  ApiGatewayResponse,
+  CacheConfig,
+  cacheFactory,
+  getFromCache,
+  LambdaEvent,
+  mapToCacheRequest,
+  Props,
+  putToCache,
+  YandexUploadFileResponse
+} from 'common'
 import properties from 'properties'
-import { cacheValue, getAudioFile, getCachedValue, uploadFileToYandexDialogs } from './utils'
+import {
+  toItem,
+  toLambdaProxyResponse,
+  toYandexResponse
+} from './utils'
+import request from 'request'
+import {
+  audioDownloadFunctionFactory,
+  audioFileDetails,
+  AudioFileOperationsConfig,
+  audioUploadFunction,
+  downloadAudioFile,
+  mapAWSLambdaEvent,
+  uploadAudioFile
+} from './audio-file'
+import syncFs, { promises as fs } from 'fs'
 
-export const upload = async (event: any): Promise<void> => {
+export const upload = async (event: LambdaEvent): Promise<void> => {
   const awaitedProps = await properties
-  const body: S3Notification = JSON.parse(event.Records[0].body)
-  const s3 = body.Records[0].s3
-  const mp3File = await getAudioFile(s3)
-  const uploadResponse = await uploadFileToYandexDialogs(awaitedProps.yandex)(s3.object.key, mp3File)
-  await cacheValue(awaitedProps.aws)(uploadResponse.sound.id)
+  const audioFileConfig: AudioFileOperationsConfig<LambdaEvent> = createAwsAudioConfig(awaitedProps)
+  const cacheConfig: CacheConfig = createCacheConfig(awaitedProps)
+  const uploadResponse: YandexUploadFileResponse = await audioFileDetails(event)
+    .flatMap(downloadAudioFile)
+    .flatMap(uploadAudioFile)
+    .run(audioFileConfig)
+  await mapToCacheRequest(uploadResponse.sound.id)
+    .flatMap(putToCache)
+    .run(cacheConfig)
 }
 
 export const playSound = async (): Promise<ApiGatewayResponse> => {
   const awaitedProps = await properties
-  const mp3Id = await getCachedValue(awaitedProps.aws)()
-  const body: YandexSkillResponse = {
-    response: {
-      end_session: true,
-      text: 'А вот и свежие юморески',
-      tts: `<speaker audio="dialogs-upload/${awaitedProps.yandex.id}/${mp3Id}.opus">`
-    },
-    version: '1.0'
-  }
-  return {
-    isBase64Encoded: false,
-    headers: { 'Access-Control-Allow-Origin': '*' },
-    statusCode: 200,
-    body: JSON.stringify(body)
-  }
+  const cacheConfig: CacheConfig = createCacheConfig(awaitedProps)
+  return await mapToCacheRequest()
+    .flatMap(getFromCache)
+    .map(toYandexResponse(awaitedProps.yandex.id))
+    .map(toLambdaProxyResponse)
+    .run(cacheConfig)
 }
+
+const createAwsAudioConfig =
+    (awaitedProps: Props): AudioFileOperationsConfig<LambdaEvent> =>
+      ({
+        map: mapAWSLambdaEvent,
+        download: audioDownloadFunctionFactory.createFunction(awaitedProps),
+        upload: audioUploadFunction(request, fs, syncFs, awaitedProps.yandex)
+      })
+
+const createCacheConfig = (props: Props): CacheConfig => ({
+  mapper: toItem(props.aws.dynamo),
+  service: cacheFactory.createCache(props)
+})

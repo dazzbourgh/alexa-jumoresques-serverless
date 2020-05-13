@@ -1,7 +1,7 @@
 import { AxiosStatic } from 'axios'
-import { VkResponse } from '../..'
+import { VkResponse } from 'common'
 
-export function vkWallFetcher (axios: AxiosStatic): (properties: any) => Promise<VkResponse> {
+export function fetcher (axios: AxiosStatic): (properties: any) => Promise<VkResponse> {
   return async (properties: any) => {
     const awaitedProps = await properties
     const accessToken: string = awaitedProps.vk.accessToken

@@ -1,8 +1,9 @@
-import { Polly, S3 } from 'aws-sdk'
+import { Polly } from 'aws-sdk'
 import { refreshJumoresques } from './vk'
-import { VkResponse, promise } from 'common'
+import { promise } from 'common'
+import { VkResponse } from './domain';
 
-describe('vk handler', () => {
+describe('describe vk handler', () => {
   test('should refresh jumoresques', async () => {
     const vkResponse: VkResponse = {
       response: {
@@ -21,17 +22,16 @@ describe('vk handler', () => {
       }
     }
     const audioStream = 'stream'
-    const polly = {
+    const pollyClient = {
       synthesizeSpeech: jest.fn(() => {
         return promise({
           AudioStream: audioStream
         })
       })
     } as unknown as Polly
-    const s3 = {
-      putObject: jest.fn(() => promise({}))
-    } as unknown as S3
-    const properties = {
+    const putToStorageFunction = jest.fn(async (): Promise<void> => await Promise.resolve())
+    const awaitedProps = {
+      provider: 'aws',
       vk: {
         domain: 'jumoreski'
       },
@@ -42,11 +42,17 @@ describe('vk handler', () => {
         }
       }
     }
-    await refreshJumoresques(polly, {
+    const putToStorageFunctionFactory = {
+      create: jest.fn(() => putToStorageFunction)
+    }
+    const synthesizeGeneralParams = {
       OutputFormat: 'mp3',
       VoiceId: 'Maxim'
-    }, s3, properties)(vkResponse)
+    }
+    await refreshJumoresques({ pollyClient, synthesizeGeneralParams, awaitedProps, putToStorageFunctionFactory })(vkResponse)
     // @ts-ignore
-    expect(s3.putObject.mock.calls[0][0].Body).toEqual(audioStream)
+    expect(putToStorageFunctionFactory.create.mock.calls[0][0].provider).toEqual('aws')
+    // @ts-ignore
+    expect(putToStorageFunction.mock.calls[0][0]).toEqual(audioStream)
   })
 })

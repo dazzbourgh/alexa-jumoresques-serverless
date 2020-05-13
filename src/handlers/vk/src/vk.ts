@@ -3,20 +3,31 @@ import {
   byLikesDescending,
   noAttachments,
   PartialSynthesizeSpeechInput,
-  putObject,
   shorterThan1500Characters,
   textToSpeech,
   toText,
-  VkResponse,
-  concatAudioBuffers
+  concatAudioBuffers,
+  Props
 } from 'common'
+import { PutToStorageFunctionFactory } from './storage'
+import { VkResponse } from './domain'
 
 type JumoresquePipeline = (vkResponse: VkResponse) => void
 
-export const refreshJumoresques = (pollyClient: AWS.Polly,
-  synthesizeGeneralParams: PartialSynthesizeSpeechInput,
-  s3Client: AWS.S3,
-  props: any): JumoresquePipeline => async (vkResponse: VkResponse) => {
+export interface Dependencies {
+  pollyClient: AWS.Polly
+  synthesizeGeneralParams: PartialSynthesizeSpeechInput
+  awaitedProps: Props
+  putToStorageFunctionFactory: PutToStorageFunctionFactory
+}
+
+export const refreshJumoresques = ({
+  pollyClient,
+  synthesizeGeneralParams,
+  awaitedProps,
+  putToStorageFunctionFactory
+}: Dependencies): JumoresquePipeline => async (vkResponse: VkResponse) => {
+  const putToStorage = putToStorageFunctionFactory.create(awaitedProps)
   const audios = await Promise.all(
     vkResponse.response.items
       .filter(noAttachments)
@@ -26,10 +37,5 @@ export const refreshJumoresques = (pollyClient: AWS.Polly,
       .map(toText)
       .map(textToSpeech(pollyClient, synthesizeGeneralParams)))
   const mergedAudio = audios.reduce(concatAudioBuffers)
-  await putObject(s3Client)({
-    Bucket: props.aws.s3.bucketName,
-    Key: props.aws.s3.key,
-    Body: mergedAudio,
-    ACL: 'public-read'
-  })
+  await putToStorage(mergedAudio)
 }

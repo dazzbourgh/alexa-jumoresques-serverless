@@ -1,73 +1,30 @@
-import { getObject, getValueFromDynamo, putValueToDynamo, S3Details } from 'common'
-import AWS from 'aws-sdk'
-import { YandexUploadFileResponse } from './model'
-import oldFs, { promises as fs } from 'fs'
-import request from 'request'
+import { CacheRequest, YandexSkillResponse } from 'common'
+import { AWSLambdaProxyResponse, DynamoProps } from './interfaces'
 
-interface DynamoParams { tableName: string, mp3Id: string }
-interface CacheValueCallParams { region: string, dynamo: DynamoParams }
+export const toYandexResponse = (id: string) => async (mp3Id: Promise<string | undefined>): Promise<YandexSkillResponse> => ({
+  response: {
+    end_session: true,
+    text: 'А вот и свежие юморески',
+    tts: `<speaker audio="dialogs-upload/${id}/${await mp3Id}.opus">`
+  },
+  version: '1.0'
+})
 
-export function cacheValue ({ region, dynamo: { tableName, mp3Id } }: CacheValueCallParams): (value: string) => Promise<void> {
-  return async (value: string) => {
-    const dynamoClient = new AWS.DynamoDB({ region: region })
-    await putValueToDynamo(dynamoClient, tableName)({
-      key: mp3Id,
-      value: value
-    })
+export const toLambdaProxyResponse = async (yandexResponse: Promise<YandexSkillResponse>): Promise<AWSLambdaProxyResponse> => ({
+  isBase64Encoded: false,
+  headers: { 'Access-Control-Allow-Origin': '*' },
+  statusCode: 200,
+  body: JSON.stringify(yandexResponse)
+})
+
+export const toItem = ({ tableName, mp3Id }: DynamoProps) => (value?: string): CacheRequest => {
+  const item: { [key: string]: string } = {
+    key: mp3Id
   }
-}
-
-export function getCachedValue ({ region, dynamo: { tableName, mp3Id } }: CacheValueCallParams): () => Promise<string | undefined> {
-  return async () => {
-    const dynamoClient = new AWS.DynamoDB({ region: region })
-    return await getValueFromDynamo(dynamoClient, tableName)(mp3Id)
+  const cacheRequest = {
+    tableName: tableName,
+    item: item
   }
-}
-
-export async function getAudioFile (s3: S3Details): Promise<AWS.S3.Body> {
-  const s3Client = new AWS.S3()
-  const response = await getObject(s3Client)({
-    Bucket: s3.bucket.name,
-    Key: s3.object.key
-  })
-  return response.Body as AWS.S3.Body
-}
-
-export interface YandexParams {
-  url: string
-  token: string
-}
-
-type YandexUploader = (filename: string, audio: AWS.S3.Body) => Promise<YandexUploadFileResponse>
-
-type RequestAPI = request.RequestAPI<request.Request, request.CoreOptions, request.RequiredUriUrl>;
-
-function createYandexUploader (request: RequestAPI): (properties: YandexParams) => YandexUploader {
-  return ({ url, token }) => async (filename: string, audio: AWS.S3.Body): Promise<YandexUploadFileResponse> => {
-    const path = `/tmp/${filename}`
-    await fs.writeFile(path, audio)
-    return await upload(request)(path, url, token)
-  }
-}
-
-export const uploadFileToYandexDialogs = createYandexUploader(request)
-
-function upload (request: RequestAPI): (filename: string, url: string, token: string) => Promise<YandexUploadFileResponse> {
-  return async (filename: string, url: string, token: string): Promise<YandexUploadFileResponse> => {
-    const formData = { file: oldFs.createReadStream(filename) }
-    return await new Promise(resolve => request.post({
-      headers: {
-        Accept: 'text/plain',
-        'Content-Type': 'multipart/form-data',
-        Authorization: `OAuth ${token}`
-      },
-      url: url,
-      formData: formData
-    }, function (err: any, resp: any, body: any) {
-      if (err) {
-        throw err
-      }
-      resolve(JSON.parse(body))
-    }))
-  }
+  if (value !== undefined) cacheRequest.item.value = value
+  return cacheRequest
 }
