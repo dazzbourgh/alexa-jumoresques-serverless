@@ -151,6 +151,7 @@ Resources:
             Schedule: 'rate(1 hour)'
             Description: Triggers refresh handler for jumoresques
             Enabled: true
+      Timeout: 15
   AlexaSkillFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -198,6 +199,7 @@ Resources:
           Properties:
             Queue: !GetAtt Mp3Sqs.Arn
             BatchSize: 1
+      Timeout: 15
   YandexMp3PlayFunction:
     Type: AWS::Serverless::Function
     Properties:
