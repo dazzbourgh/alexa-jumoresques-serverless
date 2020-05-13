@@ -1,6 +1,6 @@
 import { CacheFactory, CacheService } from './interfaces'
-import { Reader } from 'monet'
 import * as AWS from 'aws-sdk'
+import { Props } from '../../domain'
 
 export interface AWSRegionProps { region: string }
 
@@ -30,11 +30,11 @@ const dynamoCache: (awsRegionProps: AWSRegionProps) => CacheService = (awsRegion
 })
 
 export const cacheFactory: CacheFactory = {
-  createCache: type => Reader(props => {
-    switch (type) {
+  createCache: (props: Props) => {
+    switch (props.provider) {
       case 'aws':
       default:
-        return dynamoCache(props)
+        return dynamoCache(props.aws)
     }
-  })
+  }
 }

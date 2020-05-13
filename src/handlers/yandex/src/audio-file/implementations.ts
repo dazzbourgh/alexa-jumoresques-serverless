@@ -1,13 +1,25 @@
-import { AudioFileDetails, LambdaEvent, AWSRegionProps } from 'common'
+import { AudioFileDetails, AWSRegionProps, LambdaEvent, YandexUploadFileResponse } from 'common'
 import { AudioDownloadFunction, AudioDownloadFunctionFactory, AudioUploadFunction, BinaryFile } from './interfaces'
-import { Reader } from 'monet'
 import AWS from 'aws-sdk'
 import { GetObjectOutput } from 'aws-sdk/clients/s3'
-import { uploadLocalFileToYandexDialogs, writeToDisk } from '../utils'
 import { YandexParams } from '../interfaces'
-import syncFs, { promises as fs } from 'fs'
 
 export const mapAWSLambdaEvent = (evt: LambdaEvent): AudioFileDetails => JSON.parse(evt.Records[0].body).Records[0].s3
+
+export const audioDownloadFunctionFactory: AudioDownloadFunctionFactory = {
+  createFunction: (props) => {
+    switch (props.platform) {
+      case 'aws':
+      default: return s3AudioDownloadFunction(props.aws)
+    }
+  }
+}
+
+export const audioUploadFunction: (request: any, fs: any, syncFs: any, { url, token }: YandexParams) => AudioUploadFunction =
+    (request, fs, syncFs, { url, token }) => async mp3File => {
+      const path = await writeToDisk(fs)(mp3File)
+      return await uploadLocalFileToYandexDialogs({ url, token }, request, syncFs)(path)
+    }
 
 const s3AudioDownloadFunction: (awsRegionProps: AWSRegionProps) => AudioDownloadFunction =
     (awsRegionProps: AWSRegionProps) => async (details: AudioFileDetails) => {
@@ -20,16 +32,26 @@ const s3AudioDownloadFunction: (awsRegionProps: AWSRegionProps) => AudioDownload
       return response.Body as BinaryFile
     }
 
-export const audioDownloadFunctionFactory: AudioDownloadFunctionFactory = {
-  createFunction: (platform) => Reader(props => {
-    switch (platform) {
-      default: return s3AudioDownloadFunction(props)
+export const uploadLocalFileToYandexDialogs = ({ url, token }: YandexParams, request: any, syncFs: any) => async (filePath: string): Promise<YandexUploadFileResponse> => {
+  const formData = { file: syncFs.createReadStream(filePath) }
+  return await new Promise<YandexUploadFileResponse>(resolve => request.post({
+    headers: {
+      Accept: 'text/plain',
+      'Content-Type': 'multipart/form-data',
+      Authorization: `OAuth ${token}`
+    },
+    url: url,
+    formData: formData
+  }, function (err: any, resp: any, body: any) {
+    if (err) {
+      throw err
     }
-  })
+    resolve(JSON.parse(body))
+  }))
 }
 
-export const audioUploadFunction: (request: any, { url, token }: YandexParams) => AudioUploadFunction =
-    ({ request, url, token }) => async mp3File => {
-      const path = await writeToDisk(fs)(mp3File)
-      return await uploadLocalFileToYandexDialogs({ url, token }, request, syncFs)(path)
-    }
+export const writeToDisk = (fs: any) => async (binaryFile: BinaryFile): Promise<string> => {
+  const path = '/tmp/jumoresques.mp3'
+  await fs.writeFile(path, binaryFile)
+  return path
+}

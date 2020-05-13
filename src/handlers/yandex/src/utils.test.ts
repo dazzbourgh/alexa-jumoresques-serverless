@@ -1,5 +1,6 @@
-import { toItem, toYandexResponse, uploadLocalFileToYandexDialogs, writeToDisk } from './utils'
+import { toItem, toYandexResponse } from './utils'
 import { CacheRequest, YandexSkillResponse, YandexUploadFileResponse } from 'common'
+import { uploadLocalFileToYandexDialogs, writeToDisk } from './audio-file'
 
 describe('yandex utils', () => {
   test('mapper toYandexResponse', async () => {

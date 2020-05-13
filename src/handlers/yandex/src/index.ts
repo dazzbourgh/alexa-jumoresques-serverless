@@ -25,6 +25,7 @@ import {
   mapAWSLambdaEvent,
   uploadAudioFile
 } from './audio-file'
+import syncFs, { promises as fs } from 'fs'
 
 export const upload = async (event: LambdaEvent): Promise<void> => {
   const awaitedProps = await properties
@@ -53,11 +54,11 @@ const createAwsAudioConfig =
     (awaitedProps: Props): AudioFileOperationsConfig<LambdaEvent> =>
       ({
         map: mapAWSLambdaEvent,
-        download: audioDownloadFunctionFactory.createFunction(awaitedProps.provider).run(awaitedProps.aws),
-        upload: audioUploadFunction(request, awaitedProps.yandex)
+        download: audioDownloadFunctionFactory.createFunction(awaitedProps),
+        upload: audioUploadFunction(request, fs, syncFs, awaitedProps.yandex)
       })
 
 const createCacheConfig = (props: Props): CacheConfig => ({
   mapper: toItem(props.aws.dynamo),
-  service: cacheFactory.createCache(props.provider).run(props.aws)
+  service: cacheFactory.createCache(props)
 })

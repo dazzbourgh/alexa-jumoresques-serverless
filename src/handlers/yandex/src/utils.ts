@@ -1,6 +1,5 @@
-import { CacheRequest, YandexSkillResponse, YandexUploadFileResponse } from 'common'
-import { AWSLambdaProxyResponse, DynamoProps, YandexParams } from './interfaces'
-import { BinaryFile } from './audio-file'
+import { CacheRequest, YandexSkillResponse } from 'common'
+import { AWSLambdaProxyResponse, DynamoProps } from './interfaces'
 
 export const toYandexResponse = (id: string) => async (mp3Id: Promise<string | undefined>): Promise<YandexSkillResponse> => ({
   response: {
@@ -28,28 +27,4 @@ export const toItem = ({ tableName, mp3Id }: DynamoProps) => (value?: string): C
   }
   if (value !== undefined) cacheRequest.item.value = value
   return cacheRequest
-}
-
-export const uploadLocalFileToYandexDialogs = ({ url, token }: YandexParams, request: any, syncFs: any) => async (filePath: string): Promise<YandexUploadFileResponse> => {
-  const formData = { file: syncFs.createReadStream(filePath) }
-  return await new Promise<YandexUploadFileResponse>(resolve => request.post({
-    headers: {
-      Accept: 'text/plain',
-      'Content-Type': 'multipart/form-data',
-      Authorization: `OAuth ${token}`
-    },
-    url: url,
-    formData: formData
-  }, function (err: any, resp: any, body: any) {
-    if (err) {
-      throw err
-    }
-    resolve(JSON.parse(body))
-  }))
-}
-
-export const writeToDisk = (fs: any) => async (binaryFile: BinaryFile): Promise<string> => {
-  const path = '/tmp/jumoresques.mp3'
-  await fs.writeFile(path, binaryFile)
-  return path
 }

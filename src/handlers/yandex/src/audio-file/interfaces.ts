@@ -16,7 +16,7 @@ export interface AudioFileOperationsConfig<T> {
 }
 
 export interface AudioDownloadFunctionFactory {
-  createFunction: (platform: string) => Reader<Props, AudioDownloadFunction>
+  createFunction: (platform: Props) => AudioDownloadFunction
 }
 
 export const audioFileDetails: <T> (event: T) => Reader<AudioFileOperationsConfig<T>, AudioFileDetails> =

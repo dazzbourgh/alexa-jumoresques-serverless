@@ -18,7 +18,7 @@ export interface CacheService {
 }
 
 export interface CacheFactory {
-  createCache: (type: string) => Reader<Props, CacheService>
+  createCache: (props: Props) => CacheService
 }
 
 export const mapToCacheRequest = (value?: string): Reader<CacheConfig, CacheRequest> =>
