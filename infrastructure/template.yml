@@ -167,6 +167,7 @@ Resources:
         Variables:
           ENVIRONMENT: !Ref Env
           FUNCTION_NAME: alexa-handler
+          BUCKET: !Ref Mp3Bucket
   YandexMp3UploadFunction:
     Type: AWS::Serverless::Function
     Properties:
