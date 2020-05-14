@@ -3,13 +3,13 @@ import { HandlerInput } from 'ask-sdk'
 import { CustomSkillRequestHandler } from 'ask-sdk-core/dist/dispatcher/request/handler/CustomSkillRequestHandler'
 import { CustomSkillErrorHandler } from 'ask-sdk-core/dist/dispatcher/error/handler/CustomSkillErrorHandler'
 import properties from 'properties'
+import { linkFactory } from './link'
 
 const controller = {
   async play (handlerInput: HandlerInput) {
     const playBehavior = 'REPLACE_ALL'
-    const awaitedProps = (await properties).aws.s3
-    const bucketUrl = `https://${awaitedProps.bucketName}.s3-us-west-1.amazonaws.com`
-    const jumoresqueUrl = `${bucketUrl}/${awaitedProps.key}`
+    const awaitedProps = (await properties)
+    const jumoresqueUrl = linkFactory.createLink(awaitedProps)
 
     const builder = handlerInput.responseBuilder
       .speak('Here are some humoresques:')
