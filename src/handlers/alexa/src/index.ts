@@ -12,7 +12,7 @@ const controller = {
     const jumoresqueUrl = `${bucketUrl}/${awaitedProps.key}`
 
     const builder = handlerInput.responseBuilder
-      .speak('Here are some jumoresques:')
+      .speak('Here are some humoresques:')
       .withShouldEndSession(true)
       .addAudioPlayerPlayDirective(playBehavior, jumoresqueUrl, jumoresqueUrl, 0)
 
