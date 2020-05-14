@@ -1,5 +1,5 @@
-import { AudioStream } from 'aws-sdk/clients/polly'
 import { Item } from '../domain'
+import { BinaryFile } from 'common'
 
 export const noAttachments = (item: Item): boolean => item.attachments === undefined
 
@@ -9,4 +9,4 @@ export const byLikesDescending = (item1: Item, item2: Item): number => item2.lik
 
 export const toText = (item: Item): string => item.text
 
-export const concatAudioBuffers = (prev: AudioStream, cur: AudioStream): AudioStream => Buffer.concat([prev as Uint8Array, cur as Uint8Array])
+export const concatAudioBuffers = (prev: BinaryFile, cur: BinaryFile): BinaryFile => Buffer.concat([prev as Uint8Array, cur as Uint8Array])

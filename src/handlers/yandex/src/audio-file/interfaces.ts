@@ -1,9 +1,7 @@
-import { AudioFileDetails, Props, YandexUploadFileResponse } from 'common'
-import { Readable } from 'stream'
+import { AudioFileDetails, Props, YandexUploadFileResponse, BinaryFile } from 'common'
 import { Reader } from 'monet'
 
 export type FunctionEventMapper<T> = (event: T) => AudioFileDetails
-export type BinaryFile = Buffer|Uint8Array|Blob|string|Readable
 
 export type AudioDownloadFunction = (details: AudioFileDetails) => Promise<BinaryFile>;
 

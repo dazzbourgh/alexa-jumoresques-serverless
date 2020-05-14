@@ -1,7 +1,8 @@
 import { Polly } from 'aws-sdk'
 import { refreshJumoresques } from './vk'
 import { promise } from 'common'
-import { VkResponse } from './domain';
+import { VkResponse } from './domain'
+import { ttsServiceFactory } from './tts'
 
 describe('describe vk handler', () => {
   test('should refresh jumoresques', async () => {
@@ -49,7 +50,7 @@ describe('describe vk handler', () => {
       OutputFormat: 'mp3',
       VoiceId: 'Maxim'
     }
-    await refreshJumoresques({ pollyClient, synthesizeGeneralParams, awaitedProps, putToStorageFunctionFactory })(vkResponse)
+    await refreshJumoresques({ ttsServiceFactory, awaitedProps, putToStorageFunctionFactory })(vkResponse)
     // @ts-ignore
     expect(putToStorageFunctionFactory.create.mock.calls[0][0].provider).toEqual('aws')
     // @ts-ignore

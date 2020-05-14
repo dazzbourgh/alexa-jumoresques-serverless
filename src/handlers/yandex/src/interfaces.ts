@@ -1,5 +1,4 @@
-import { YandexUploadFileResponse } from 'common'
-import { BinaryFile } from './audio-file'
+import { YandexUploadFileResponse, BinaryFile } from 'common'
 
 export interface AWSLambdaProxyResponse {
   isBase64Encoded: boolean

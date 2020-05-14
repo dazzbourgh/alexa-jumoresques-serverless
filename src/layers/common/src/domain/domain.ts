@@ -1,3 +1,5 @@
+import { Readable } from 'stream'
+
 export interface Jumoresque {
   text: string
   likes: number
@@ -89,3 +91,5 @@ export interface YandexSkillResponse {
   }
   version: string
 }
+
+export type BinaryFile = Buffer | Uint8Array | Blob | string | Readable

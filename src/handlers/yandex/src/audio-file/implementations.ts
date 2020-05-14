@@ -1,5 +1,5 @@
-import { AudioFileDetails, AWSRegionProps, LambdaEvent, YandexUploadFileResponse } from 'common'
-import { AudioDownloadFunction, AudioDownloadFunctionFactory, AudioUploadFunction, BinaryFile } from './interfaces'
+import { AudioFileDetails, AWSRegionProps, LambdaEvent, YandexUploadFileResponse, BinaryFile } from 'common'
+import { AudioDownloadFunction, AudioDownloadFunctionFactory, AudioUploadFunction } from './interfaces'
 import AWS from 'aws-sdk'
 import { GetObjectOutput } from 'aws-sdk/clients/s3'
 import { YandexParams } from '../interfaces'

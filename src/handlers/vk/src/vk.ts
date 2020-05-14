@@ -1,7 +1,5 @@
-import AWS from 'aws-sdk'
 import {
-  PartialSynthesizeSpeechInput,
-  Props, textToSpeech
+  Props
 } from 'common'
 import { PutToStorageFunctionFactory } from './storage'
 import { VkResponse } from './domain'
@@ -12,19 +10,18 @@ import {
   shorterThan1500Characters,
   toText
 } from './utils/generic-utils'
+import { TtsServiceFactory } from './tts'
 
 type JumoresquePipeline = (vkResponse: VkResponse) => void
 
 export interface Dependencies {
-  pollyClient: AWS.Polly
-  synthesizeGeneralParams: PartialSynthesizeSpeechInput
+  ttsServiceFactory: TtsServiceFactory
   awaitedProps: Props
   putToStorageFunctionFactory: PutToStorageFunctionFactory
 }
 
 export const refreshJumoresques = ({
-  pollyClient,
-  synthesizeGeneralParams,
+  ttsServiceFactory,
   awaitedProps,
   putToStorageFunctionFactory
 }: Dependencies): JumoresquePipeline => async (vkResponse: VkResponse) => {
@@ -36,7 +33,7 @@ export const refreshJumoresques = ({
       .sort(byLikesDescending)
       .slice(0, 5)
       .map(toText)
-      .map(textToSpeech(pollyClient, synthesizeGeneralParams)))
+      .map(ttsServiceFactory.createTtsService(awaitedProps).toSpeech))
   const mergedAudio = audios.reduce(concatAudioBuffers)
   await putToStorage(mergedAudio)
 }
