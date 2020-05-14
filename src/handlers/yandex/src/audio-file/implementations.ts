@@ -1,10 +1,26 @@
-import { AudioFileDetails, AWSRegionProps, LambdaEvent, YandexUploadFileResponse, BinaryFile } from 'common'
-import { AudioDownloadFunction, AudioDownloadFunctionFactory, AudioUploadFunction } from './interfaces'
+import { AudioFileDetails, AWSRegionProps, LambdaEvent, YandexUploadFileResponse, BinaryFile, Props } from 'common'
+import {
+  AudioDownloadFunction,
+  AudioDownloadFunctionFactory,
+  AudioUploadFunction,
+  FunctionEventMapper, MapperFactory
+} from './interfaces'
 import AWS from 'aws-sdk'
 import { GetObjectOutput } from 'aws-sdk/clients/s3'
 import { YandexParams } from '../interfaces'
 
-export const mapAWSLambdaEvent = (evt: LambdaEvent): AudioFileDetails => JSON.parse(evt.Records[0].body).Records[0].s3
+const mapAWSLambdaEvent: FunctionEventMapper<LambdaEvent> = (evt: LambdaEvent): AudioFileDetails => JSON.parse(evt.Records[0].body).Records[0].s3
+
+export const mapperFactory: MapperFactory = {
+  createMapper: (props: Props): FunctionEventMapper<any> => {
+    switch (props.provider) {
+      case 'aws':
+        return mapAWSLambdaEvent
+      default:
+        return mapAWSLambdaEvent
+    }
+  }
+}
 
 export const audioDownloadFunctionFactory: AudioDownloadFunctionFactory = {
   createFunction: (props) => {

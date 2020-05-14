@@ -22,7 +22,7 @@ import {
   AudioFileOperationsConfig,
   audioUploadFunction,
   downloadAudioFile,
-  mapAWSLambdaEvent,
+  mapperFactory,
   uploadAudioFile
 } from './audio-file'
 import syncFs, { promises as fs } from 'fs'
@@ -53,7 +53,7 @@ export const playSound = async (): Promise<ApiGatewayResponse> => {
 const createAwsAudioConfig =
     (awaitedProps: Props): AudioFileOperationsConfig<LambdaEvent> =>
       ({
-        map: mapAWSLambdaEvent,
+        map: mapperFactory.createMapper(awaitedProps),
         download: audioDownloadFunctionFactory.createFunction(awaitedProps),
         upload: audioUploadFunction(request, fs, syncFs, awaitedProps.yandex)
       })

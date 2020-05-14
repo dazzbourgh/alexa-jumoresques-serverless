@@ -7,6 +7,10 @@ export type AudioDownloadFunction = (details: AudioFileDetails) => Promise<Binar
 
 export type AudioUploadFunction = (mp3File: BinaryFile) => Promise<YandexUploadFileResponse>
 
+export interface MapperFactory {
+  createMapper: <T> (props: Props) => FunctionEventMapper<T>
+}
+
 export interface AudioFileOperationsConfig<T> {
   map: FunctionEventMapper<T>
   download: AudioDownloadFunction
