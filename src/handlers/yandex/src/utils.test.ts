@@ -1,4 +1,4 @@
-import { toItem, toYandexResponse } from './utils'
+import { toItem, toLambdaProxyResponse, toYandexResponse } from './utils'
 import { CacheRequest, YandexSkillResponse, YandexUploadFileResponse } from 'common'
 import { uploadLocalFileToYandexDialogs, writeToDisk } from './audio-file'
 
@@ -36,7 +36,7 @@ describe('yandex utils', () => {
     expect(fs.writeFile).toBeCalledWith('/tmp/jumoresques.mp3', file)
   })
   test('should upload to yandex dialogs', async () => {
-    const response: YandexUploadFileResponse = {
+    const yandexResponse: YandexUploadFileResponse = {
       sound: {
         id: '123',
         error: '',
@@ -47,7 +47,7 @@ describe('yandex utils', () => {
     }
     const request = {
       post: (params: any, callback: (err: any, resp: any, body: any) => void) => {
-        callback(null, null, JSON.stringify(response))
+        callback(null, null, JSON.stringify(yandexResponse))
       }
     }
     const syncFs = { createReadStream: jest.fn() }
@@ -56,5 +56,17 @@ describe('yandex utils', () => {
     const result = await uploadLocalFileToYandexDialogs(yandexParams, request, syncFs)(filePath)
     expect(result.sound.id).toEqual('123')
     expect(syncFs.createReadStream).toBeCalledWith(filePath)
+  })
+  test('should map to lambda response', async () => {
+    const yandexSkillResponse: YandexSkillResponse = {
+      version: '1.0',
+      response: {
+        text: 'text',
+        end_session: true,
+        tts: '1'
+      }
+    }
+    const result = await toLambdaProxyResponse(Promise.resolve(yandexSkillResponse))
+    expect(result.body).toEqual(JSON.stringify(yandexSkillResponse))
   })
 })

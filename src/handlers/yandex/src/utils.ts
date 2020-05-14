@@ -14,7 +14,7 @@ export const toLambdaProxyResponse = async (yandexResponse: Promise<YandexSkillR
   isBase64Encoded: false,
   headers: { 'Access-Control-Allow-Origin': '*' },
   statusCode: 200,
-  body: JSON.stringify(yandexResponse)
+  body: JSON.stringify(await yandexResponse)
 })
 
 export const toItem = ({ tableName, mp3Id }: DynamoProps) => (value?: string): CacheRequest => {
