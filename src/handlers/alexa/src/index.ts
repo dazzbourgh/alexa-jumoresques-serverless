@@ -25,12 +25,39 @@ const controller = {
   }
 }
 
+const HelpHandler: CustomSkillRequestHandler = {
+  canHandle (handlerInput) {
+    const request = handlerInput.requestEnvelope.request
+    return request.type === 'IntentRequest' &&
+        request.intent.name === 'AMAZON.HelpHandler'
+  },
+  handle (handlerInput) {
+    return handlerInput.responseBuilder
+      .speak('If you want to hear new humoresques, say "Ask My Favorite Admin to tell jokes"')
+      .getResponse()
+  }
+}
+
 const TellJumoresquesHandler: CustomSkillRequestHandler = {
-  canHandle () {
-    return true
+  canHandle (input: HandlerInput) {
+    const request = input.requestEnvelope.request
+    return request.type === 'IntentRequest' && request.intent.name === 'JumoresquesIntent'
   },
   async handle (handlerInput: HandlerInput) {
     return await controller.play(handlerInput)
+  }
+}
+
+const StopHandler: CustomSkillRequestHandler = {
+  canHandle (input: HandlerInput): Promise<boolean> | boolean {
+    const request = input.requestEnvelope.request
+    return request.type === 'IntentRequest' &&
+    (request.intent.name === 'AMAZON.StopIntent' ||
+            request.intent.name === 'AMAZON.PauseIntent' ||
+            request.intent.name === 'AMAZON.CancelIntent')
+  },
+  handle (input: HandlerInput) {
+    return controller.stop(input)
   }
 }
 
@@ -50,7 +77,9 @@ const ErrorHandler: CustomSkillErrorHandler = {
 
 export const handler = Alexa.SkillBuilders.custom()
   .addRequestHandlers(
-    TellJumoresquesHandler
+    TellJumoresquesHandler,
+    HelpHandler,
+    StopHandler
   )
   .addErrorHandlers(
     ErrorHandler
