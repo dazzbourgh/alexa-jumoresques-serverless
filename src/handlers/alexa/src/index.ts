@@ -21,6 +21,7 @@ const controller = {
   stop (handlerInput: HandlerInput) {
     return handlerInput.responseBuilder
       .addAudioPlayerStopDirective()
+      .withShouldEndSession(true)
       .getResponse()
   }
 }
@@ -71,6 +72,7 @@ const ErrorHandler: CustomSkillErrorHandler = {
 
     return handlerInput.responseBuilder
       .speak(speakOutput)
+      .withShouldEndSession(true)
       .getResponse()
   }
 }
